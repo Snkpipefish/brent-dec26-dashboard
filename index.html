@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brent Dec-26 (CBZ26) — overvåking</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --line: #262b36;
+    --txt: #e6e9ef; --muted: #8b93a4;
+    --green: #2ecc71; --yellow: #f1c40f; --red: #e74c3c;
+    --accent: #4aa3ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--txt);
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px; max-width: 1000px; margin: 0 auto;
+  }
+  h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; padding: 16px;
+  }
+  .card .k { color: var(--muted); font-size: 12px; text-transform: uppercase;
+             letter-spacing: .04em; margin-bottom: 8px; }
+  .card .v { font-size: 30px; font-weight: 700; line-height: 1; }
+  .card .v.big { font-size: 44px; }
+  .card .sub2 { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .up { color: var(--green); } .down { color: var(--red); } .flat { color: var(--yellow); }
+  .status {
+    margin: 18px 0; padding: 16px 18px; border-radius: 10px;
+    border: 1px solid var(--line); display: flex; align-items: center; gap: 14px;
+  }
+  .dot { width: 18px; height: 18px; border-radius: 50%; flex: none; }
+  .status .label { font-size: 18px; font-weight: 700; }
+  .status .detail { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .g { background: var(--green); } .y { background: var(--yellow); } .r { background: var(--red); }
+  .status.g { border-color: rgba(46,204,113,.4); background: rgba(46,204,113,.08); }
+  .status.y { border-color: rgba(241,196,15,.4); background: rgba(241,196,15,.08); }
+  .status.r { border-color: rgba(231,76,60,.4); background: rgba(231,76,60,.08); }
+  .stale {
+    background: rgba(241,196,15,.12); border: 1px solid rgba(241,196,15,.5);
+    color: var(--yellow); padding: 10px 14px; border-radius: 8px;
+    font-size: 13px; margin-bottom: 16px;
+  }
+  .closed {
+    background: rgba(74,163,255,.10); border: 1px solid rgba(74,163,255,.4);
+    color: #9ecbff; padding: 10px 14px; border-radius: 8px;
+    font-size: 13px; margin-bottom: 16px;
+  }
+  .plan {
+    background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 8px; padding: 14px 16px; margin: 16px 0; font-size: 14px; line-height: 1.5;
+  }
+  .controls { display: flex; align-items: center; gap: 10px; margin: 16px 0 8px; flex-wrap: wrap; }
+  .controls label { color: var(--muted); font-size: 13px; }
+  .controls input[type=number] {
+    width: 70px; background: var(--bg); color: var(--txt);
+    border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font-size: 14px;
+  }
+  .chartwrap { background: var(--panel); border: 1px solid var(--line);
+               border-radius: 10px; padding: 16px; margin-top: 8px; }
+  .legend { display: flex; gap: 18px; font-size: 12px; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 3px;
+                         margin-right: 6px; vertical-align: middle; }
+  .lg-dec::before { background: var(--accent); }
+  .lg-front::before { background: #6b7280; }
+  .lg-86::before { background: var(--yellow); }
+  .lg-88::before { background: var(--green); }
+  .empty { color: var(--muted); padding: 40px; text-align: center; }
+  a { color: var(--accent); }
+  code { background: #0b0d11; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+  <h1>Brent Dec-26 (CBZ26) — inngangssignal</h1>
+  <div class="sub" id="subtitle">Laster logg …</div>
+
+  <div id="staleBox"></div>
+
+  <div class="grid" id="cards"></div>
+
+  <div class="status" id="status">
+    <div class="dot" id="statusDot"></div>
+    <div>
+      <div class="label" id="statusLabel">—</div>
+      <div class="detail" id="statusDetail"></div>
+    </div>
+  </div>
+
+  <div class="plan" id="plan"></div>
+
+  <div class="controls">
+    <label>Bekreftelsesterskel $</label>
+    <input type="number" id="confirmInput" value="88" step="0.5" min="0">
+    <label>Utgangspunkt $</label>
+    <input type="number" id="baseInput" value="86" step="0.5" min="0">
+    <label>Svekkelse mot $</label>
+    <input type="number" id="weakInput" value="82" step="0.5" min="0">
+    <span class="sub" style="margin-left:8px">(juster fritt — alt regnes om)</span>
+  </div>
+
+  <div class="chartwrap">
+    <div id="chart"></div>
+    <div class="legend">
+      <span class="lg-dec">Dec-26 (CBZ26)</span>
+      <span class="lg-front">Front (kontekst)</span>
+      <span class="lg-86">Utgangspunkt</span>
+      <span class="lg-88">Bekreftelse</span>
+    </div>
+  </div>
+
+<script src="dec26_log.js" onerror="window.__logLoadError=true"></script>
+<script>
+"use strict";
+
+// ---- konfig (kan overstyres i UI) ------------------------------------------
+const CFG = { confirm: 88, base: 86, weak: 82 };
+
+const $ = (id) => document.getElementById(id);
+const fmt = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v))
+  ? "N/A" : "$" + Number(v).toFixed(d);
+const signed = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v))
+  ? "N/A" : (v >= 0 ? "+" : "") + Number(v).toFixed(d);
+
+function getLog() {
+  const log = (window.DEC26_LOG && Array.isArray(window.DEC26_LOG)) ? window.DEC26_LOG : [];
+  return log;
+}
+
+function validDecEntries(log) {
+  return log.filter(e => typeof e.dec26_price === "number");
+}
+
+function render() {
+  CFG.confirm = parseFloat($("confirmInput").value);
+  CFG.base = parseFloat($("baseInput").value);
+  CFG.weak = parseFloat($("weakInput").value);
+
+  const log = getLog();
+
+  if (window.__logLoadError || log.length === 0) {
+    $("subtitle").textContent = "";
+    $("cards").innerHTML = "";
+    $("staleBox").innerHTML =
+      '<div class="empty">Ingen logg funnet ennå.<br>' +
+      'Kjør <code>.venv/bin/python dec26_monitor.py</code> for å hente og logge ' +
+      'første verdi, og oppdater så denne siden.</div>';
+    $("status").style.display = "none";
+    $("plan").style.display = "none";
+    $("chart").innerHTML = "";
+    return;
+  }
+  $("status").style.display = "flex";
+  $("plan").style.display = "block";
+
+  const last = log[log.length - 1];
+  const valids = validDecEntries(log);
+  const latest = valids.length ? valids[valids.length - 1] : null;
+  const prev = valids.length > 1 ? valids[valids.length - 2] : null;
+  const first = valids.length ? valids[0] : null;
+
+  const lastLabel = last.market_closed ? "marked stengt" : "siste henting";
+  $("subtitle").textContent =
+    `${log.length} oppføring(er) logget · ${lastLabel} ${last.ts}` +
+    (latest ? ` · siste gyldige Dec-26 ${latest.ts}` : "");
+
+  // ---- merke for siste oppføring: marked stengt vs. faktisk feil ----
+  $("staleBox").innerHTML = "";
+  if (last.market_closed) {
+    const since = latest ? latest.ts : "(ingen)";
+    $("staleBox").innerHTML =
+      `<div class="closed"><strong>Marked stengt</strong> — ${last.market_closed_reason || "ikke handledag"}. ` +
+      `Dec-26 handles ikke nå; viser siste handledags verdi fra <strong>${since}</strong>.</div>`;
+  } else if (last.dec26_price === null || last.dec26_price === undefined) {
+    const since = latest ? latest.ts : "(aldri)";
+    $("staleBox").innerHTML =
+      `<div class="stale"><strong>⚠ STALE</strong> — siste henting (${last.ts}) ` +
+      `ga ingen Dec-26-pris.<br>Årsak: ${last.dec26_error || "ukjent"}.<br>` +
+      `Viser siste gyldige verdi fra <strong>${since}</strong>.</div>`;
+  }
+
+  if (!latest) {
+    $("cards").innerHTML =
+      '<div class="empty" style="grid-column:1/-1">Ingen gyldig Dec-26-pris ' +
+      'logget ennå (alle hentinger har feilet).</div>';
+    $("status").style.display = "none";
+    $("plan").style.display = "none";
+    $("chart").innerHTML = "";
+    return;
+  }
+
+  const price = latest.dec26_price;
+  const dPrev = prev ? +(price - prev.dec26_price).toFixed(2) : null;
+  const dFirst = first ? +(price - first.dec26_price).toFixed(2) : null;
+  const toConfirm = +(CFG.confirm - price).toFixed(2);
+
+  // ---- nøkkelkort ----
+  const cls = (v) => v === null ? "" : v > 0.0001 ? "up" : v < -0.0001 ? "down" : "flat";
+  const cards = [
+    {
+      k: "Dec-26 nå", v: fmt(price), big: true,
+      sub: latest.dec26_source ? `kilde: ${latest.dec26_source}` +
+        (latest.dec26_crosscheck_ok === false ? " · ⚠ kilde-avvik" : "") : ""
+    },
+    {
+      k: "Endring siden forrige", v: signed(dPrev), cls: cls(dPrev),
+      sub: prev ? prev.ts : "ingen tidligere henting"
+    },
+    {
+      k: "Endring siden første", v: signed(dFirst), cls: cls(dFirst),
+      sub: first ? first.ts : ""
+    },
+    {
+      k: "Avstand til terskel", v: toConfirm > 0 ? `${signed(-toConfirm)}` : "OVER ✓",
+      cls: toConfirm > 0 ? "flat" : "up",
+      sub: `terskel $${CFG.confirm.toFixed(2)} · utg.pkt $${CFG.base.toFixed(2)}`
+    },
+  ];
+  $("cards").innerHTML = cards.map(c =>
+    `<div class="card"><div class="k">${c.k}</div>` +
+    `<div class="v ${c.big ? "big" : ""} ${c.cls || ""}">${c.v}</div>` +
+    `<div class="sub2">${c.sub}</div></div>`
+  ).join("");
+
+  // ---- kontekst-spreads (egen rad) ----
+  const ctx = [
+    { k: "Front-Dec26 spread", v: signed(last.front_dec ?? latest.front_dec) + " $/fat",
+      sub: `front: ${latest.front_code || "?"} ${fmt(last.front_price ?? latest.front_price)}` },
+    { k: "M1-M2 (prompt cal.)", v: signed(last.m1_m2 ?? latest.m1_m2) + " $/fat",
+      sub: "prompt-kalenderspread" },
+  ];
+  $("cards").innerHTML += ctx.map(c =>
+    `<div class="card" style="grid-column:span 2"><div class="k">${c.k}</div>` +
+    `<div class="v">${c.v}</div><div class="sub2">${c.sub}</div></div>`
+  ).join("");
+
+  // ---- statusindikator ----
+  let st;
+  if (price >= CFG.confirm) {
+    st = { c: "g", t: "SIGNAL UTLØST",
+      d: `Dec-26 (${fmt(price)}) er over bekreftelsesterskelen $${CFG.confirm.toFixed(2)} — markedet repriser varigheten.` };
+  } else if (dPrev !== null && dPrev >= 0.20 && price > CFG.base) {
+    st = { c: "g", t: "SIGNAL NÆRMER SEG",
+      d: `Dec-26 stiger (${signed(dPrev)} siden forrige) og er over utgangspunktet $${CFG.base.toFixed(2)}. ${signed(-toConfirm)} til bekreftelse.` };
+  } else if (price <= CFG.weak || (dPrev !== null && dPrev <= -0.30)) {
+    st = { c: "r", t: "TESEN SVEKKES",
+      d: `Dec-26 (${fmt(price)}) faller tilbake mot $80${dPrev !== null ? ` (${signed(dPrev)} siden forrige)` : ""}.` };
+  } else {
+    st = { c: "y", t: "FLAT / SIDELENGS",
+      d: `Dec-26 (${fmt(price)}) beveger seg lite${dPrev !== null ? ` (${signed(dPrev)} siden forrige)` : ""} — ingen bekreftelse ennå. ${signed(-toConfirm)} til terskel.` };
+  }
+  $("status").className = "status " + st.c;
+  $("statusDot").className = "dot " + st.c;
+  $("statusLabel").textContent = st.t;
+  $("statusDetail").textContent = st.d;
+
+  // ---- trade-plan-linje ----
+  const m = (last.m1_m2 ?? latest.m1_m2);
+  let plan;
+  const overConfirm = price >= CFG.confirm;
+  const calOk = (typeof m === "number") && m > 1.50;
+  if (overConfirm && calOk) {
+    plan = `✅ <strong>Inngangstrigger nærmer seg:</strong> Dec-26 over $${CFG.confirm.toFixed(2)} ` +
+      `(${fmt(price)}) + M1–M2 fortsatt ${signed(m)} (&gt;+$1,50). ` +
+      `Men vent også på pris i <strong>$92–95-sonen på Skilling</strong> før inngang.`;
+  } else {
+    const mangler = [];
+    if (!overConfirm) mangler.push(`Dec-26 må over $${CFG.confirm.toFixed(2)} (nå ${fmt(price)})`);
+    if (!calOk) mangler.push(`M1–M2 må holde seg >+$1,50 (nå ${signed(m)})`);
+    plan = `⏳ <strong>Trigger ikke klar.</strong> Mangler: ${mangler.join("; ")}. ` +
+      `Hold også øye med $92–95-sonen på Skilling som prisbekreftelse.`;
+  }
+  $("plan").innerHTML = plan;
+
+  drawChart(valids);
+}
+
+// ---- inline SVG-graf: Dec-26 over tid + terskellinjer + front ---------------
+function drawChart(valids) {
+  const W = 920, H = 360, padL = 52, padR = 16, padT = 16, padB = 40;
+  const iw = W - padL - padR, ih = H - padT - padB;
+
+  if (valids.length === 0) { $("chart").innerHTML = ""; return; }
+
+  const decVals = valids.map(e => e.dec26_price);
+  const frontVals = valids.map(e => (typeof e.front_price === "number" ? e.front_price : null));
+  const allY = decVals.concat(frontVals.filter(v => v !== null)).concat([CFG.base, CFG.confirm, CFG.weak]);
+  let ymin = Math.min(...allY), ymax = Math.max(...allY);
+  const padY = Math.max((ymax - ymin) * 0.08, 1);
+  ymin -= padY; ymax += padY;
+
+  const n = valids.length;
+  const x = (i) => padL + (n === 1 ? iw / 2 : (i / (n - 1)) * iw);
+  const y = (v) => padT + ih - ((v - ymin) / (ymax - ymin)) * ih;
+
+  const svgns = "http://www.w3.org/2000/svg";
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="${svgns}">`;
+
+  // y-akse gridlinjer + etiketter
+  const ticks = 5;
+  for (let t = 0; t <= ticks; t++) {
+    const val = ymin + (t / ticks) * (ymax - ymin);
+    const yy = y(val);
+    s += `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="#262b36" stroke-width="1"/>`;
+    s += `<text x="${padL - 8}" y="${yy + 4}" fill="#8b93a4" font-size="11" text-anchor="end">$${val.toFixed(1)}</text>`;
+  }
+
+  // terskellinjer
+  const hline = (val, color, dash, label) => {
+    if (val < ymin || val > ymax) return "";
+    const yy = y(val);
+    return `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="${color}" stroke-width="1.5" stroke-dasharray="${dash}"/>` +
+      `<text x="${W - padR}" y="${yy - 5}" fill="${color}" font-size="11" text-anchor="end">${label} $${val.toFixed(0)}</text>`;
+  };
+  s += hline(CFG.base, "#f1c40f", "5 4", "utg.pkt");
+  s += hline(CFG.confirm, "#2ecc71", "5 4", "bekreftelse");
+
+  // front-linje (svakere, kontekst)
+  let frontPath = "", started = false;
+  frontVals.forEach((v, i) => {
+    if (v === null) { started = false; return; }
+    frontPath += (started ? " L" : " M") + `${x(i).toFixed(1)} ${y(v).toFixed(1)}`;
+    started = true;
+  });
+  if (frontPath) s += `<path d="${frontPath}" fill="none" stroke="#6b7280" stroke-width="1.5" opacity="0.7"/>`;
+
+  // Dec-26-linje
+  let decPath = "";
+  decVals.forEach((v, i) => { decPath += (i === 0 ? "M" : " L") + `${x(i).toFixed(1)} ${y(v).toFixed(1)}`; });
+  s += `<path d="${decPath}" fill="none" stroke="#4aa3ff" stroke-width="2.5"/>`;
+
+  // punkter på Dec-26
+  decVals.forEach((v, i) => {
+    s += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3" fill="#4aa3ff"/>`;
+  });
+  // siste punkt fremhevet
+  const li = n - 1;
+  s += `<circle cx="${x(li).toFixed(1)}" cy="${y(decVals[li]).toFixed(1)}" r="5" fill="#4aa3ff" stroke="#0f1115" stroke-width="2"/>`;
+  s += `<text x="${x(li).toFixed(1)}" y="${(y(decVals[li]) - 12).toFixed(1)}" fill="#e6e9ef" font-size="12" font-weight="700" text-anchor="middle">$${decVals[li].toFixed(2)}</text>`;
+
+  // x-akse: noen få tidsstempler (kort form HH:MM eller dato)
+  const labelIdx = n <= 6 ? valids.map((_, i) => i)
+    : [0, Math.floor(n / 3), Math.floor(2 * n / 3), n - 1];
+  labelIdx.forEach(i => {
+    const ts = valids[i].ts || "";
+    const short = ts.length >= 16 ? ts.slice(5, 16).replace("T", " ") : ts;
+    s += `<text x="${x(i).toFixed(1)}" y="${H - 14}" fill="#8b93a4" font-size="10" text-anchor="middle">${short}</text>`;
+  });
+
+  s += `</svg>`;
+  $("chart").innerHTML = s;
+}
+
+// ---- init ----
+["confirmInput", "baseInput", "weakInput"].forEach(id =>
+  $(id).addEventListener("input", render));
+render();
+</script>
+</body>
+</html>
