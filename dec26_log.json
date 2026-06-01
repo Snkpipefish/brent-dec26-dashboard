@@ -44,5 +44,19 @@
     "front_price": 94.03,
     "m1_m2": 2.35,
     "front_dec": 8.11
+  },
+  {
+    "ts": "2026-06-01T11:22:53Z",
+    "market_closed": false,
+    "dec26_price": 86.06,
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 80.03,
+    "front_code": "CBQ26",
+    "front_price": 94.11,
+    "m1_m2": 2.32,
+    "front_dec": 8.05,
+    "front_jun": 14.08
   }
 ]
