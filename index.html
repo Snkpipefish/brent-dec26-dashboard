@@ -163,20 +163,28 @@
       </div>
     </div>
     <div>
-      <h2>Fysisk — «tesen dør hvis …» (manuell sjekk)</h2>
+      <h2>Fysisk — «tesen dør hvis …» (auto + nyhets-sitert)</h2>
       <div class="panel">
         <table class="watch">
-          <tr><td><strong>Iran-lastinger</strong><div class="note" style="margin:2px 0 0">Normaliseres &gt;1 mb/d → fatene kommer tilbake → EXIT.</div></td>
-              <td style="text-align:right"><span class="pill na">&lt;0,3 mb/d (mai)</span></td></tr>
+          <tr><td><strong>Iran-lastinger</strong><div class="note" style="margin:2px 0 0">Normaliseres &gt;1 mb/d → fatene kommer tilbake → EXIT. Nyhets-sitert.</div></td>
+              <td style="text-align:right"><span class="pill na" id="iranWatch">—</span></td></tr>
+          <tr><td><strong>Forties-diff</strong><div class="note" style="margin:2px 0 0">Mot Dated Brent. Nordsjø-stramhet. Nyhets-sitert (Reuters).</div></td>
+              <td style="text-align:right"><span class="pill na" id="fortiesWatch">—</span></td></tr>
           <tr><td><strong>Dated Brent (fysisk spot)</strong><div class="note" style="margin:2px 0 0">Over papir-front = fysisk nekter å normalisere → tesen støttes. EIA-proxy.</div></td>
               <td style="text-align:right"><span class="pill na" id="datedWatch">—</span></td></tr>
+          <tr><td><strong>Brent-Dubai EFS</strong><div class="note" style="margin:2px 0 0">Papir-spread Brent vs Dubai swaps. Nyhets-sitert.</div></td>
+              <td style="text-align:right"><span class="pill na" id="efsWatch">—</span></td></tr>
+          <tr><td><strong>Brent-Dubai (månedlig)</strong><div class="note" style="margin:2px 0 0">World Bank månedssnitt, ~1 mnd etterslep — IKKE prompt-EFS.</div></td>
+              <td style="text-align:right"><span class="pill na" id="bdWatch">—</span></td></tr>
           <tr><td><strong>M1–M2 prompt</strong><div class="note" style="margin:2px 0 0">Mot null → prompt-stresset slipper.</div></td>
               <td style="text-align:right"><span class="pill na" id="mWatch">—</span></td></tr>
         </table>
       </div>
       <div class="note">
-        To nivåer: <strong>papir</strong> (Dec-26/Jun-27, M1–M2) avgjør om en flat-price-long tjener og om tesen er riktig;
-        <strong>fysisk</strong> (Dated Brent, lastinger) avgjør om fatene faktisk kommer tilbake. Disse tre måles utenfor dette feedet.
+        <strong>Kilder:</strong> Dated Brent = EIA (auto). Brent-Dubai månedlig = World Bank (auto).
+        Iran-lastinger / Forties / EFS = automatisk hentet fra ferske nyhetsartikler (Bing News → kilde + dato);
+        peker på tallet for en gitt måned, ikke sanntid. Hold over en verdi for å se sitatet.
+        Argus/Platts/tankersporing-tall finnes ikke gratis i sanntid.
       </div>
     </div>
   </div>
@@ -389,6 +397,35 @@ function render() {
     const premTxt = prem !== null ? ` · ${signed(prem)} vs front` : "";
     $("datedWatch").textContent = fmt(dbv) + asof + premTxt;
     $("datedWatch").className = "pill " + pc;
+  }
+
+  // ---- nyhets-siterte fysiske assessments (Iran / Forties / EFS) ----
+  const lastWith = (pred) => [...log].reverse().find(pred);
+  const ageColor = (a) => (a === null || a === undefined) ? "na"
+    : a <= 45 ? "ok" : a <= 90 ? "warn" : "na";
+  function setNewsPill(id, obj, valFmt) {
+    const el = $(id);
+    if (!obj || typeof obj.value !== "number") {
+      el.textContent = "ingen ferskt sitat"; el.className = "pill na"; el.removeAttribute("title"); return;
+    }
+    const date = obj.date ? String(obj.date).slice(0, 10) : "?";
+    const unit = obj.unit === "$/bbl" ? "$/fat" : (obj.unit || "");
+    el.textContent = `${valFmt(obj.value)} ${unit} · ${obj.source || "?"} ${date}`;
+    el.className = "pill " + ageColor(obj.age_days);
+    if (obj.sentence) el.title = obj.sentence; else el.removeAttribute("title");
+  }
+  const getNews = (k) => (lastWith(e => e[k] && typeof e[k].value === "number") || {})[k];
+  setNewsPill("iranWatch", getNews("iran_loadings"), v => Number(v).toFixed(2));
+  setNewsPill("fortiesWatch", getNews("forties"), v => signed(v));
+  setNewsPill("efsWatch", getNews("efs_news"), v => signed(v));
+
+  // ---- Brent-Dubai månedlig (World Bank) ----
+  const bdmEntry = lastWith(e => typeof e.brent_dubai_monthly === "number");
+  if (bdmEntry) {
+    $("bdWatch").textContent = `${signed(bdmEntry.brent_dubai_monthly)} $ · WB ${bdmEntry.brent_dubai_period || ""}`;
+    $("bdWatch").className = "pill na";
+  } else {
+    $("bdWatch").textContent = "—"; $("bdWatch").className = "pill na";
   }
 
   drawChart(valids);
