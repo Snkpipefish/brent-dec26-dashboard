@@ -58,5 +58,42 @@
     "m1_m2": 2.32,
     "front_dec": 8.05,
     "front_jun": 14.08
+  },
+  {
+    "ts": "2026-06-01T11:50:24Z",
+    "market_closed": false,
+    "dec26_price": 85.66,
+    "skilling_brent": 95.07,
+    "skilling_asof": "2026-05-28T21:00:00Z",
+    "skilling_error": null,
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 80.01,
+    "front_code": "CBQ26",
+    "front_price": 93.61,
+    "m1_m2": 2.22,
+    "front_dec": 7.95,
+    "front_jun": 13.6
+  },
+  {
+    "ts": "2026-06-01T11:53:10Z",
+    "market_closed": false,
+    "dec26_price": 85.74,
+    "skilling_brent": 95.07,
+    "skilling_asof": "2026-05-28T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 102.75,
+    "dated_brent_asof": "2026-05-26",
+    "dated_brent_error": null,
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 79.98,
+    "front_code": "CBQ26",
+    "front_price": 93.72,
+    "m1_m2": 2.32,
+    "front_dec": 7.98,
+    "front_jun": 13.74
   }
 ]

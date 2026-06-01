@@ -143,6 +143,11 @@
   <div class="two">
     <div>
       <h2>Trade-plan — Oil Brent (XBRUSD) på Skilling</h2>
+      <div class="card" id="skillingNow" style="margin-bottom:14px">
+        <div class="k">Skilling flat price (XBRUSD) — live</div>
+        <div class="v" id="skillingVal">—</div>
+        <div class="sub2" id="skillingZone"></div>
+      </div>
       <div class="panel">
         <table class="ladder">
           <tr><td class="lvl t2">$115–120+</td><td>Strukket mål — kun ved reeskalering / MOU ryker.</td></tr>
@@ -152,8 +157,8 @@
         </table>
       </div>
       <div class="note">
-        Flat price (Skilling-kurs ≈ futures-front + ~$3) er et <strong>annet instrument</strong> enn signalet over.
-        Skilling-prisen er ikke i dette feedet — sjekkes manuelt. Inngang krever trigger:
+        Flat price er et <strong>annet instrument</strong> enn lange-enden-signalet over. Skilling-prisen
+        hentes nå automatisk fra bot-ens cTrader-feed (siste D1-close). Inngang krever trigger:
         <strong>(1)</strong> Dec-26 fortsetter opp fra $86, <strong>eller (2)</strong> reeskalering. Pris i sonen alene er ikke nok.
       </div>
     </div>
@@ -163,8 +168,8 @@
         <table class="watch">
           <tr><td><strong>Iran-lastinger</strong><div class="note" style="margin:2px 0 0">Normaliseres &gt;1 mb/d → fatene kommer tilbake → EXIT.</div></td>
               <td style="text-align:right"><span class="pill na">&lt;0,3 mb/d (mai)</span></td></tr>
-          <tr><td><strong>Dated Brent (fysisk spot)</strong><div class="note" style="margin:2px 0 0">Normaliserer ned mot papir-front → tesen svekkes.</div></td>
-              <td style="text-align:right"><span class="pill na">$102,75 (26. mai)</span></td></tr>
+          <tr><td><strong>Dated Brent (fysisk spot)</strong><div class="note" style="margin:2px 0 0">Over papir-front = fysisk nekter å normalisere → tesen støttes. EIA-proxy.</div></td>
+              <td style="text-align:right"><span class="pill na" id="datedWatch">—</span></td></tr>
           <tr><td><strong>M1–M2 prompt</strong><div class="note" style="margin:2px 0 0">Mot null → prompt-stresset slipper.</div></td>
               <td style="text-align:right"><span class="pill na" id="mWatch">—</span></td></tr>
         </table>
@@ -347,6 +352,44 @@ function render() {
     `<strong>Diagnoseregel (EBC):</strong> varig endring når lange enden stiger samtidig som — eller mens — fronten faller. ` +
     `Følg <strong>1–12-måneders-spreaden</strong> (Front–Dec: ~$18 i april → ${fdec!==null?signed(fdec):"~$8"} nå), ikke frontmånedsprisen. ` +
     `Referanse 1. juni: Dec-26 $80→$86, Jun-27 ~$80, M1–M2 +$2,51, Dated Brent $102,75 (over papir-front).`;
+
+  // ---- Skilling flat price (live, fra cTrader-feed) ----
+  const skEntry = [...log].reverse().find(e => typeof e.skilling_brent === "number");
+  const sk = skEntry ? skEntry.skilling_brent : null;
+  if (sk === null) {
+    $("skillingVal").textContent = "N/A";
+    $("skillingVal").className = "v";
+    $("skillingZone").textContent = "ingen Skilling-pris logget ennå (cTrader-feed)";
+  } else {
+    let z, zc;
+    if (sk < 88)        { z = "Under hard stop $88 — flat-price bekrefter ikke setupet"; zc = "down"; }
+    else if (sk < 92)   { z = "Mellom hard stop $88 og inngangssone $92"; zc = "flat"; }
+    else if (sk <= 95)  { z = "I inngangssonen $92–95 — kjøp krever trigger + dropp"; zc = "up"; }
+    else if (sk < 104)  { z = "Over inngangssonen — vent på fredsoverskrift-dropp inn i $92–95"; zc = "flat"; }
+    else if (sk < 115)  { z = "Ved/over første mål $104–108 — vurder å ta 50%"; zc = "up"; }
+    else                { z = "I strukket mål $115–120+"; zc = "up"; }
+    $("skillingVal").textContent = fmt(sk);
+    $("skillingVal").className = "v " + zc;
+    const asof = skEntry.skilling_asof ? ` · siste D1-close per ${String(skEntry.skilling_asof).slice(0,10)}` : "";
+    $("skillingZone").textContent = z + asof;
+  }
+
+  // ---- Dated Brent (EIA-proxy) i fysisk-panelet ----
+  const dbEntry = [...log].reverse().find(e => typeof e.dated_brent === "number");
+  const dbv = dbEntry ? dbEntry.dated_brent : null;
+  const fp = num(latest.front_price);
+  if (dbv === null) {
+    $("datedWatch").textContent = "—";
+    $("datedWatch").className = "pill na";
+  } else {
+    const prem = (fp !== null) ? +(dbv - fp).toFixed(2) : null;
+    let pc = "na";
+    if (prem !== null) pc = prem >= 3 ? "ok" : prem > 0 ? "warn" : "dead";
+    const asof = dbEntry.dated_brent_asof ? ` (${String(dbEntry.dated_brent_asof).slice(0,10)})` : "";
+    const premTxt = prem !== null ? ` · ${signed(prem)} vs front` : "";
+    $("datedWatch").textContent = fmt(dbv) + asof + premTxt;
+    $("datedWatch").className = "pill " + pc;
+  }
 
   drawChart(valids);
 }
