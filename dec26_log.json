@@ -242,5 +242,54 @@
     "m1_m2": 2.83,
     "front_dec": 9.55,
     "front_jun": 16.18
+  },
+  {
+    "ts": "2026-06-02T15:30:13Z",
+    "market_closed": false,
+    "dec26_price": 86.7,
+    "skilling_brent": 98.5,
+    "skilling_asof": "2026-05-31T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 102.75,
+    "dated_brent_asof": "2026-05-26",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 27.733,
+    "brent_dubai_period": "2026M04",
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": 6.0,
+      "unit": "$/bbl",
+      "source": "oilprice.com",
+      "date": "2026-03-03T09:30:00-06:00",
+      "age_days": 91,
+      "sentence": "The spread between Brent futures and Dubai swaps — known as the Exchange of Futures for Swaps (EFS) — surged above $6 per barrel, compared to less than $2 just last week before the Iran conflict erupted.",
+      "url": "https://oilprice.com/Latest-Energy-News/World-News/Hormuz-Freeze-Sends-Brent-Dubai-Spread-to-Multi-Year-High.html"
+    },
+    "iran_loadings": {
+      "value": 1.5,
+      "unit": "mb/d",
+      "source": "trtworld.com",
+      "date": "2026-03-12T15:10:54.148Z",
+      "age_days": 82,
+      "sentence": "z - TRT World LIVE TV POLITICS TÜRKİYE WAR ON GAZA BIZTECH INFOGRAPHICS FEATURES OPINION WAR ON IRAN WAR ON IRAN 4 min read After causing worldwide crisis, Iran continues to ship its oil through Hormuz Shipping data shows Iranian crude exports between 1.1 and 1.5 million barrels per day since February 28, broadly in line with the country’s 2025 average of about 1.69 million bpd.",
+      "url": "https://www.trtworld.com/article/124e04d497e9"
+    },
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 80.89,
+    "front_code": "CBQ26",
+    "front_price": 94.68,
+    "m1_m2": 2.32,
+    "front_dec": 7.98,
+    "front_jun": 13.79
   }
 ]
