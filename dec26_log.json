@@ -389,5 +389,54 @@
     "m1_m2": 2.4,
     "front_dec": 8.67,
     "front_jun": 14.48
+  },
+  {
+    "ts": "2026-06-05T15:30:12Z",
+    "market_closed": false,
+    "dec26_price": 85.69,
+    "skilling_brent": 97.99,
+    "skilling_asof": "2026-06-03T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 98.29,
+    "dated_brent_asof": "2026-06-01",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": null,
+    "brent_dubai_period": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": 6.0,
+      "unit": "$/bbl",
+      "source": "oilprice.com",
+      "date": "2026-03-03T09:30:00-06:00",
+      "age_days": 94,
+      "sentence": "The spread between Brent futures and Dubai swaps — known as the Exchange of Futures for Swaps (EFS) — surged above $6 per barrel, compared to less than $2 just last week before the Iran conflict erupted.",
+      "url": "https://oilprice.com/Latest-Energy-News/World-News/Hormuz-Freeze-Sends-Brent-Dubai-Spread-to-Multi-Year-High.html"
+    },
+    "iran_loadings": {
+      "value": 0.567,
+      "unit": "mb/d",
+      "source": "timesnownews.com",
+      "date": "2026-04-28T20:34:04+05:30",
+      "age_days": 38,
+      "sentence": "According to commodity analytics firm Kpler, Iranian crude loadings have plummeted from an average of 2.1 million barrels per day before the blockade to just 567,000 barrels per day since April 13.",
+      "url": "https://www.timesnownews.com/world/middle-east/where-is-iran-dumping-its-unsold-oil-as-storage-runs-out-article-154190550"
+    },
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": false,
+    "jun27_price": 80.07,
+    "front_code": "CBQ26",
+    "front_price": 94.05,
+    "m1_m2": 2.47,
+    "front_dec": 8.36,
+    "front_jun": 13.98
   }
 ]
