@@ -54,7 +54,13 @@
   <p class="lede">Er den fysiske knappheten priset som «alvorlig, men midlertidig» feilaktig?
      Et veddemål på varighet, ikke på knapphet.</p>
 
-  <h2>Status — 1. juni 2026</h2>
+  <h2>Live nøkkeltall <span id="liveDate" style="color:var(--muted);font-size:13px;font-weight:400"></span></h2>
+  <table id="liveTable"><tbody id="liveRows"><tr><td>Laster ferske tall fra dashboard-feeden …</td></tr></tbody></table>
+  <p style="color:var(--muted);font-size:12.5px;font-style:italic;margin:6px 2px 0">
+    Tallene i selve notatet under er <strong>øyeblikksbildet per 1. juni 2026</strong> (slik analysen ble
+    skrevet). Boksen over oppdateres automatisk fra feeden — sammenlign for å se hvor mye som har beveget seg.</p>
+
+  <h2>Status — øyeblikksbilde 1. juni 2026</h2>
   <div class="status-box">
     Tesen har fått sitt første, svake medhold. Brent falt ~19 % i mai (verste måned siden
     pandemien) på en foreløpig våpenhvileavtale — men tre signaler peker nå tesens vei: den lange
@@ -71,9 +77,12 @@
      vedvarende krigsrisiko for tankfart gjør at fat ikke kommer raskt tilbake selv ved en
      gjenåpning av Hormuz.</p>
   <p>Det gjør dette til et <strong class="k">varighetsveddemål, ikke et knapphetsveddemål</strong>.
-     Kontrollvariabelen som avgjør tesen er om de bakre kontraktene (Dec-26, Jun-27) løfter seg.
-     Per 1. juni har de så vidt begynt — Dec-26 fra ~$80 (april) til ~$86 — mens fronten falt.
-     Det er det første tegnet markedet gir, om enn svakt.</p>
+     Kontrollvariabelen er presist <strong class="k">kompresjonen i front–Dec-spreaden</strong> — at den
+     lange enden stiger <em>relativt til</em> fronten — ikke det absolutte nivået på Dec-26. Et absolutt
+     løft på Dec-26 alene kan like gjerne komme av generell backwardation-reprising eller rollover fra
+     passive indeksfond; det som faktisk skiller «krisen er over» fra «varigheten reprises» er at
+     <strong class="k">Dec-26 stiger mens front faller</strong> (spreaden $18→$8). Per 1. juni har det så
+     vidt begynt — første tegn, om enn svakt. (Se §2.3 og diagnoseregelen.)</p>
   <div class="callout">
     <strong class="k">Viktig forbehold om instrument:</strong> flat price (futures/CFD) er det
     markedet som repriser fred raskest på overskrifter. Man kan ha rett om fundamentene og likevel
@@ -199,8 +208,11 @@
      bekreftelse. Posisjonen er fortsatt tidlig — som betyr enten foran, eller feil.</p>
 
   <h2>Trade-plan — Oil Brent (XBRUSD) på Skilling</h2>
-  <p>Operasjonell del av analysen over. Tesen handler om varighet; instrumentet er flat price (grovt).
-     Derfor styrer reglene, ikke magefølelsen.</p>
+  <p>Operasjonell del av analysen over. Vær eksplisitt om hva dette er: en
+     <strong class="k">flat-price-trade med varighets-/kurvetrigger</strong> — kurvestrukturen
+     (front–Dec-kompresjon, M1–M2) er <em>signalet</em>, ikke selve bettet. Flat price er et bevisst
+     <strong class="k">suboptimalt instrument</strong>, valgt fordi det er det jeg har tilgang til på
+     Skilling — ikke fordi tesen lever renest der. Derfor styrer reglene, ikke magefølelsen.</p>
 
   <h3>Nivåer ($/fat, Skilling-kurs)</h3>
   <table>
@@ -256,6 +268,41 @@
         rett om fundamentene og likevel bli stoppet ut. Reglene beskytter deg — ikke instrumentet.</li>
   </ul>
 
+  <h2>Svakheter, motargumenter og åpne spørsmål</h2>
+  <p>Tesen føres med motargumentene synlige — det styrker den, og viser hva som må dokumenteres før
+     posisjonering. Høyest prioritet øverst.</p>
+  <table>
+    <tr><th>Punkt</th><th>Svakhet / motargument</th><th>Status</th></tr>
+    <tr><td><strong class="k">Sement-pluggede brønner</strong></td>
+        <td>Det viktigste strukturelle premisset (uker–måneder workover per brønn) er <em>udokumentert</em>.
+            Det er ikke opplagt at berørte brønner er sementert fremfor kun ventil-stengt (wellhead shut-in);
+            Iran stenger og åpner brønner rutinemessig. Må spesifiseres: hvilket felt (Kharg / Lavan /
+            South Pars?) og hvilken stengningstype, med kilde på faktisk workover. Uten dette faller det
+            viktigste varighetsargumentet.</td>
+        <td class="exit">ÅPENT — må dokumenteres</td></tr>
+    <tr><td><strong class="k">Krigsrisiko / forsikring</strong></td>
+        <td>2019 (Fujairah-angrep, Stena Impero-beslag) er et negativt presedenseksempel: tankfarten var i
+            gang igjen innen <em>dager</em>, ikke måneder — P&amp;I-klubbene repriser raskt. Tesen må forklare
+            hva som er annerledes nå (faktisk minelegging vs. overflate-trusler?), ellers svekkes
+            krigsrisiko-leddet vesentlig.</td>
+        <td class="reduce">ÅPENT — krever «hva er annerledes»</td></tr>
+    <tr><td><strong class="k">Iran-insentiv</strong></td>
+        <td>Mer betinget enn opprinnelig formulert: Iran har insentiv til å <em>true med</em> langvarig
+            stengning, men det optimale er <em>usikkerhet</em>, ikke faktisk vedvarende stengning.
+            Motstridende insentiver: inntektsbehov, eskaleringsrisiko fra USA/Saudi, og at stengt stred
+            også skader Kina — Irans viktigste kjøper og diplomatiske støtte.</td>
+        <td class="reduce">JUSTERT (betinget)</td></tr>
+    <tr><td><strong class="k">Kontrollvariabel</strong></td>
+        <td>Skal leses som <em>spread-kompresjon</em> (Dec-26 stiger mens front faller), ikke absolutt
+            $86-nivå — se Sammendrag og §2.3. Absolutt løft alene kan være backwardation-reprising eller
+            indeksfond-rollover.</td>
+        <td class="hold">JUSTERT i notatet</td></tr>
+    <tr><td><strong class="k">Instrument vs. tese</strong></td>
+        <td>Tesen lever i kurvestrukturen, men traden er på flat price. Nå rammet som en flat-price-trade
+            med kurvetrigger, med eksplisitt erkjent suboptimalt instrument — se trade-planen.</td>
+        <td class="hold">JUSTERT i notatet</td></tr>
+  </table>
+
   <div class="disc">
     Analyse, ikke investeringsråd. Terminpriser og kalenderspreads per 1. juni kryssjekket mot
     Barchart/oilprice/yfinance (±$0,03). Dated Brent fra EIA (26. mai). Forties-differensial og prompt
@@ -265,5 +312,38 @@
   </div>
 
   <a class="back" href="index.html" style="margin-top:20px">← Tilbake til dashbordet</a>
+
+<script src="dec26_log.js" onerror="window.__noLog=true"></script>
+<script>
+(function () {
+  var log = (window.DEC26_LOG && Array.isArray(window.DEC26_LOG)) ? window.DEC26_LOG : [];
+  var rows = document.getElementById("liveRows");
+  function lastWith(k) { for (var i = log.length - 1; i >= 0; i--) { if (typeof log[i][k] === "number") return log[i]; } return null; }
+  if (window.__noLog || !log.length) {
+    rows.innerHTML = "<tr><td>Live-feeden er ikke tilgjengelig her (åpne via dashbordet/Pages).</td></tr>";
+    return;
+  }
+  var e = lastWith("dec26_price");
+  if (!e) { rows.innerHTML = "<tr><td>Ingen live data ennå.</td></tr>"; return; }
+  var f = function (v, d) { return (v === null || v === undefined || isNaN(v)) ? "N/A" : "$" + Number(v).toFixed(d === undefined ? 2 : d); };
+  var sg = function (v) { return (v === null || v === undefined || isNaN(v)) ? "N/A" : (v >= 0 ? "+" : "") + Number(v).toFixed(2); };
+  var pick = function (k) { var x = lastWith(k); return x ? x[k] : null; };
+  document.getElementById("liveDate").textContent = "— auto, per " + String(e.ts || "").slice(0, 10);
+  var bdm = lastWith("brent_dubai_monthly");
+  var data = [
+    ["Dec-26 (CBZ26)", f(e.dec26_price)],
+    ["Jun-27 (CBM27)", f(pick("jun27_price"))],
+    ["Front" + (e.front_code ? " (" + e.front_code + ")" : ""), f(e.front_price)],
+    ["Front–Dec spread", (typeof e.front_dec === "number" ? sg(e.front_dec) + " $" : "N/A")],
+    ["M1–M2 (prompt)", (typeof e.m1_m2 === "number" ? sg(e.m1_m2) + " $" : "N/A")],
+    ["Skilling flat (XBRUSD)", f(pick("skilling_brent"))],
+    ["Dated Brent (EIA)", f(pick("dated_brent"))],
+    ["Brent–Dubai (WB mnd)", (bdm ? sg(bdm.brent_dubai_monthly) + " $ (" + (bdm.brent_dubai_period || "") + ")" : "N/A")]
+  ];
+  rows.innerHTML = data.map(function (r) {
+    return "<tr><td>" + r[0] + "</td><td style='text-align:right;font-weight:700'>" + r[1] + "</td></tr>";
+  }).join("");
+})();
+</script>
 </body>
 </html>
