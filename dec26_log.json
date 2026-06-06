@@ -302,8 +302,8 @@
     "dated_brent": 102.75,
     "dated_brent_asof": "2026-05-26",
     "dated_brent_error": null,
-    "brent_dubai_monthly": null,
-    "brent_dubai_period": null,
+    "brent_dubai_monthly": 12.87,
+    "brent_dubai_period": "2026M05",
     "forties": {
       "value": null,
       "unit": "$/bbl",
@@ -339,7 +339,8 @@
     "front_price": 97.38,
     "m1_m2": 2.52,
     "front_dec": 9.09,
-    "front_jun": 15.58
+    "front_jun": 15.58,
+    "brent_dubai_error": null
   },
   {
     "ts": "2026-06-04T15:30:13Z",
@@ -351,8 +352,8 @@
     "dated_brent": 98.29,
     "dated_brent_asof": "2026-06-01",
     "dated_brent_error": null,
-    "brent_dubai_monthly": null,
-    "brent_dubai_period": null,
+    "brent_dubai_monthly": 12.87,
+    "brent_dubai_period": "2026M05",
     "forties": {
       "value": null,
       "unit": "$/bbl",
@@ -388,7 +389,8 @@
     "front_price": 94.94,
     "m1_m2": 2.4,
     "front_dec": 8.67,
-    "front_jun": 14.48
+    "front_jun": 14.48,
+    "brent_dubai_error": null
   },
   {
     "ts": "2026-06-05T15:30:12Z",
@@ -400,8 +402,8 @@
     "dated_brent": 98.29,
     "dated_brent_asof": "2026-06-01",
     "dated_brent_error": null,
-    "brent_dubai_monthly": null,
-    "brent_dubai_period": null,
+    "brent_dubai_monthly": 12.87,
+    "brent_dubai_period": "2026M05",
     "forties": {
       "value": null,
       "unit": "$/bbl",
@@ -437,6 +439,7 @@
     "front_price": 94.05,
     "m1_m2": 2.47,
     "front_dec": 8.36,
-    "front_jun": 13.98
+    "front_jun": 13.98,
+    "brent_dubai_error": null
   }
 ]
