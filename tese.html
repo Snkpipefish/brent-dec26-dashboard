@@ -70,20 +70,8 @@
     har snudd fra «motsagt» til «svakt understøttet».
   </div>
 
-  <div class="callout" style="border-left:3px solid var(--orange)">
-    <strong class="k">Oppdatering per 6. juni 2026:</strong> Siden notatet (1. juni) har det
-    <em>fysiske</em> leddet myknet, mens kurvesignalet står ~stille:
-    <ul style="margin:8px 0 0">
-      <li><strong class="k">Dated Brent $98,3</strong> (EIA, per 1. juni) — NED fra $102,75 (26. mai):
-          fysisk spot letter.</li>
-      <li><strong class="k">Brent–Dubai-spread mai $12,9</strong> (World Bank) — halvert fra april $27,7:
-          sour/fysisk-premien smalner.</li>
-      <li><strong class="k">Dec-26 ~$85,7 · M1–M2 +$2,5 · front–Dec +$8,4</strong> — lange enden løfter
-          seg <em>ikke</em> videre; kurven ~uendret, fortsatt backwardert.</li>
-    </ul>
-    <span style="display:block;margin-top:8px">Lesning: tesen styrkes ikke — fysisk-tightness-leddet
-    (Dated, Brent–Dubai) er på vei ned, mens bekreftelsessignalet (lange enden) er flatt. Se «Live
-    nøkkeltall» over for sanntid.</span>
+  <div class="callout" id="autoStatus" style="border-left:3px solid var(--orange)">
+    <strong class="k">Status nå</strong> — laster løpende signalretning fra feeden …
   </div>
 
   <h2>Sammendrag</h2>
@@ -234,10 +222,9 @@
      enden av kurven undervurderer hvor lenge sement og krigsrisiko holder fat ute. Per 1. juni har den
      lange enden så vidt begynt å gi tesen rett (Dec-26 $80→$86), men det er et første tegn, ikke en
      bekreftelse. Posisjonen er fortsatt tidlig — som betyr enten foran, eller feil.</p>
-  <p><strong class="k">Per 6. juni:</strong> den lange enden har stoppet å løfte seg (Dec-26 ~$85,7,
-     altså <em>under</em> $86) og fysisk-leddet mykner (Dated Brent $102,75→$98,3; Brent–Dubai-spread
-     $27,7→$12,9). Tesen er verken bekreftet eller avlivet, men <strong class="k">signalretningen er
-     svakere enn 1. juni</strong> — vent på fornyet løft i lange enden før noe legges til.</p>
+  <p><strong class="k">Løpende status:</strong> se «Status nå» øverst (auto fra feeden) for om lange
+     enden faktisk løfter seg akkurat nå — det er den løpende avgjøreren, ikke 1.-juni-øyeblikksbildet.
+     Signalet svinger: vent på vedvarende løft i lange enden + M1–M2 over +$1,50 før noe legges til.</p>
 
   <h2>Trade-plan — Oil Brent (XBRUSD) på Skilling</h2>
   <p>Operasjonell del av analysen over. Vær eksplisitt om hva dette er: en
@@ -409,6 +396,36 @@
   rows.innerHTML = data.map(function (r) {
     return "<tr><td>" + r[0] + "</td><td style='text-align:right;font-weight:700'>" + r[1] + "</td></tr>";
   }).join("");
+
+  // ---- Auto «Status nå»: løpende signalretning fra feeden (aldri utdatert) ----
+  var as = document.getElementById("autoStatus");
+  if (as) {
+    var firstE = null;
+    for (var j = 0; j < log.length; j++) { if (typeof log[j].dec26_price === "number") { firstE = log[j]; break; } }
+    var decFirst = firstE ? firstE.dec26_price : null;
+    var decNow = e.dec26_price;
+    var decChg = (decFirst !== null) ? +(decNow - decFirst).toFixed(2) : null;
+    var mNow = pick("m1_m2");
+    var datedNow = pick("dated_brent");
+    var prem = (typeof datedNow === "number" && typeof e.front_price === "number") ? +(datedNow - e.front_price).toFixed(2) : null;
+    var bd = lastWith("brent_dubai_monthly");
+    var d = String(e.ts || "").slice(0, 10);
+    var curve = (decChg === null) ? "ukjent" : decChg >= 0.5 ? "løfter seg" : decChg <= -0.5 ? "faller tilbake" : "~flat";
+    var mOk = (typeof mNow === "number" && mNow > 1.5);
+    var read;
+    if (curve === "løfter seg" && mOk) read = "Bekreftelsessignalet (lange enden) løfter seg og backwardation er intakt — retningen mot tesen.";
+    else if (curve === "faller tilbake") read = "Lange enden faller tilbake — signalet svekkes.";
+    else read = "Lange enden er ~flat — ingen ny bekreftelse.";
+    if (prem !== null && prem < 4) read += " Men fysisk-premien (Dated vs front) smalner — fysisk-leddet mykner.";
+    as.innerHTML =
+      "<strong class='k'>Status nå (auto, per " + d + "):</strong>" +
+      "<ul style='margin:8px 0 0'>" +
+        "<li><strong class='k'>Dec-26 " + f(decNow) + "</strong>" + (decChg !== null ? " — " + sg(decChg) + " siden første logg (" + f(decFirst) + ")" : "") + " → lange enden " + curve + "</li>" +
+        "<li><strong class='k'>M1–M2 " + (typeof mNow === "number" ? sg(mNow) + " $" : "N/A") + "</strong> — " + (mOk ? "over" : "under") + " +$1,50</li>" +
+        "<li><strong class='k'>Dated Brent " + f(datedNow) + "</strong>" + (prem !== null ? " (" + sg(prem) + " vs front)" : "") + " · Brent–Dubai " + (bd ? sg(bd.brent_dubai_monthly) + " $ (" + (bd.brent_dubai_period || "") + ")" : "N/A") + "</li>" +
+      "</ul>" +
+      "<span style='display:block;margin-top:8px'>Lesning: " + read + " Oppdateres automatisk fra feeden.</span>";
+  }
 })();
 </script>
 </body>
