@@ -308,9 +308,31 @@ function render() {
   $("mWatch").className = "pill " + (m === null ? "na" : m > CFG.mLive ? "ok" : m > 0 ? "warn" : "dead");
 
   // ---- tese-status: HOLD / REDUSER / EXIT (fra dokumentets signaltabell) ----
+  // Trendkrav: med daglig kadens skal "stiger"/"faller" bety en VEDVARENDE
+  // bevegelse over de siste dagene, ikke en éndagssprett. Vindu: siste 5
+  // målinger (4 dagsendringer); krever flertall i samme retning + kumulativ
+  // bevegelse. Færre enn 4 målinger -> fall tilbake til dag-til-dag.
+  const win = valids.slice(-5).map(e => e.dec26_price);
+  const chgs = []; for (let i = 1; i < win.length; i++) chgs.push(win[i] - win[i - 1]);
+  const cum = win.length >= 2 ? +(win[win.length - 1] - win[0]).toFixed(2) : null;
+  const ups = chgs.filter(c => c > 0.0001).length;
+  const downs = chgs.filter(c => c < -0.0001).length;
+  let decRising, decFalling;
+  if (chgs.length >= 3) {
+    decRising = ups > downs && cum >= 0.75;
+    decFalling = downs > ups && cum <= -0.75;
+  } else {
+    decRising = dPrev !== null && dPrev >= 0.20;
+    decFalling = dPrev !== null && dPrev <= -0.30;
+  }
+  const trendTxt = (chgs.length >= 3)
+    ? `${signed(cum)} over siste ${chgs.length} dager (${ups} opp/${downs} ned)`
+    : `${signed(dPrev)} siden forrige`;
+  // "Holder over utgangspunktet": de to siste stengningene begge over base.
+  const holdsBase = valids.length >= 2
+    && valids[valids.length - 1].dec26_price > CFG.base
+    && valids[valids.length - 2].dec26_price > CFG.base;
   const mLives = m !== null && m > CFG.mLive;
-  const decRising = dPrev !== null && dPrev >= 0.20;
-  const decFalling = dPrev !== null && dPrev <= -0.30;
   const nearWeak = price <= CFG.weak + 2;   // nær $80-sonen
 
   let st;
@@ -319,16 +341,16 @@ function render() {
       d: `Dec-26 (${fmt(price)}) er nær $${CFG.weak.toFixed(0)} og M1–M2 mot null. Fatene kan være på vei tilbake — se fysisk sjekk.` };
   } else if (decFalling && !mLives) {
     st = { c: "o", t: "REDUSER — stram stop",
-      d: `Lange enden svekkes (${signed(dPrev)} på Dec-26) og M1–M2 (${m===null?"N/A":signed(m)}) er under +$${CFG.mLive.toFixed(2)}.` };
+      d: `Lange enden svekkes (${trendTxt}) og M1–M2 (${m===null?"N/A":signed(m)}) er under +$${CFG.mLive.toFixed(2)}.` };
   } else if (price >= CFG.confirm && (jun === null || jun >= CFG.weak)) {
     st = { c: "g", t: "BEKREFTELSE STYRKES",
       d: `Dec-26 (${fmt(price)}) over $${CFG.confirm.toFixed(0)} — lange enden løfter seg, tesen får medhold.` };
   } else if (decRising) {
     st = { c: "g", t: "HOLD — tesen lever (stiger)",
-      d: `Dec-26 stiger ${signed(dPrev)} fra forrige. ${signed(-toConfirm)} til $${CFG.confirm.toFixed(0)}-bekreftelse.` };
+      d: `Dec-26 i vedvarende løft: ${trendTxt}. ${signed(-toConfirm)} til $${CFG.confirm.toFixed(0)}-bekreftelse.` };
   } else if (mLives) {
     st = { c: "g", t: "HOLD — tesen lever",
-      d: `M1–M2 (${signed(m)}) holder over +$${CFG.mLive.toFixed(2)}. Lange enden flat (Dec-26 ${fmt(price)}) — venter på løft.` };
+      d: `M1–M2 (${signed(m)}) holder over +$${CFG.mLive.toFixed(2)}. Lange enden uten vedvarende løft (${trendTxt}) — venter.` };
   } else {
     st = { c: "y", t: "FLAT / AVVENTER",
       d: `Dec-26 (${fmt(price)}) sidelengs og M1–M2 ${m===null?"N/A":signed(m)} svakt. Ingen bekreftelse ennå.` };
@@ -342,8 +364,12 @@ function render() {
   let trg, tcls;
   if (price >= CFG.confirm) {
     tcls = "ok"; trg = `Dec-26 over $${CFG.confirm.toFixed(0)} — sterkt trigger-tegn.`;
-  } else if (decRising && price > CFG.base) {
-    tcls = "ok"; trg = `Dec-26 stiger fra $${CFG.base.toFixed(0)} (${signed(dPrev)}) — trigger-tegn til stede.`;
+  } else if (decRising && holdsBase) {
+    tcls = "ok"; trg = `Dec-26 i vedvarende løft (${trendTxt}) og holder over $${CFG.base.toFixed(0)} — trigger-tegn til stede.`;
+  } else if (price > CFG.base && !holdsBase) {
+    tcls = "na"; trg = `Dec-26 (${fmt(price)}) har krysset $${CFG.base.toFixed(0)}, men ikke HOLDT det (forrige stengning under) — ikke aktiv.`;
+  } else if (price > CFG.base && !decRising) {
+    tcls = "na"; trg = `Dec-26 (${fmt(price)}) er over $${CFG.base.toFixed(0)}, men uten vedvarende løft (${trendTxt}) — ikke aktiv.`;
   } else {
     tcls = "na"; trg = `Dec-26 har ikke fortsatt opp fra $${CFG.base.toFixed(0)} ennå (nå ${fmt(price)}).`;
   }
@@ -351,7 +377,7 @@ function render() {
   $("trigger").innerHTML =
     `<span class="pill ${tcls}">INNGANGSTRIGGER</span> &nbsp;${trg}${coSig}<br>` +
     `<span class="note" style="display:block;margin-top:8px">Krever minst én: ` +
-    `<strong>(1)</strong> Dec-26 fortsetter opp fra $${CFG.base.toFixed(0)}, eller <strong>(2)</strong> reeskalering. ` +
+    `<strong>(1)</strong> Dec-26 bryter over og HOLDER $${CFG.base.toFixed(0)}+ (vedvarende, ikke éndagssprett), eller <strong>(2)</strong> reeskalering. ` +
     `Så: kjøp på dropp inn i <strong>$92–95</strong> på Skilling (ikke på spike), hard stop &lt;$88. ` +
     `Pris i sonen alene er <strong>ikke</strong> nok.</span>`;
 
