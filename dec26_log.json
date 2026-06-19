@@ -696,5 +696,55 @@
     "m1_m2": 0.2,
     "front_dec": 1.68,
     "front_jun": 3.95
+  },
+  {
+    "ts": "2026-06-19T15:30:16Z",
+    "market_closed": false,
+    "dec26_price": 77.81,
+    "skilling_brent": 79.46,
+    "skilling_asof": "2026-06-17T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 84.36,
+    "dated_brent_asof": "2026-06-15",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 12.87,
+    "brent_dubai_period": "2026M05",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": 6.0,
+      "unit": "$/bbl",
+      "source": "oilprice.com",
+      "date": "2026-03-03T09:30:00-06:00",
+      "age_days": 108,
+      "sentence": "The spread between Brent futures and Dubai swaps — known as the Exchange of Futures for Swaps (EFS) — surged above $6 per barrel, compared to less than $2 just last week before the Iran conflict erupted.",
+      "url": "https://oilprice.com/Latest-Energy-News/World-News/Hormuz-Freeze-Sends-Brent-Dubai-Spread-to-Multi-Year-High.html"
+    },
+    "iran_loadings": {
+      "value": 1.67,
+      "unit": "mb/d",
+      "source": "dailytimes.com.pk",
+      "date": "2026-06-17T12:31:59+00:00",
+      "age_days": 2,
+      "sentence": "The figure represented less than one-fifth of Iran’s 2025 average export volume of 1.67 million barrels per day after the US naval blockade limited maritime traffic.",
+      "url": "https://dailytimes.com.pk/1509261/iranian-oil-exports-resume-after-deal/"
+    },
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 74.7,
+    "front_code": "CBQ26",
+    "front_price": 80.23,
+    "m1_m2": 0.39,
+    "front_dec": 2.42,
+    "front_jun": 5.53
   }
 ]
