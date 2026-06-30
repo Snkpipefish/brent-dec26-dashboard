@@ -846,5 +846,55 @@
     "m1_m2": -0.45,
     "front_dec": 0.03,
     "front_jun": 1.46
+  },
+  {
+    "ts": "2026-06-30T15:30:14Z",
+    "market_closed": false,
+    "dec26_price": 73.29,
+    "skilling_brent": 73.58,
+    "skilling_asof": "2026-06-28T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 76.49,
+    "dated_brent_asof": "2026-06-22",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 12.87,
+    "brent_dubai_period": "2026M05",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": 6.0,
+      "unit": "$/bbl",
+      "source": "oilprice.com",
+      "date": "2026-03-03T09:30:00-06:00",
+      "age_days": 115,
+      "sentence": "The spread between Brent futures and Dubai swaps — known as the Exchange of Futures for Swaps (EFS) — surged above $6 per barrel, compared to less than $2 just last week before the Iran conflict erupted.",
+      "url": "https://oilprice.com/Latest-Energy-News/World-News/Hormuz-Freeze-Sends-Brent-Dubai-Spread-to-Multi-Year-High.html"
+    },
+    "iran_loadings": {
+      "value": 1.67,
+      "unit": "mb/d",
+      "source": "aol.com",
+      "date": "2026-06-17T08:12:01+00:00",
+      "age_days": 9,
+      "sentence": "blockade sent Iranian crude exports in May to their lowest level in six years at 260,000 barrels per day, a fraction of 2025's average of 1.67 million bpd, Kpler data showed.",
+      "url": "https://www.aol.com/articles/while-trump-hails-gulf-oil-081201000.html"
+    },
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 71.43,
+    "front_code": "CBQ26",
+    "front_price": 73.11,
+    "m1_m2": -0.7,
+    "front_dec": -0.18,
+    "front_jun": 1.68
   }
 ]
