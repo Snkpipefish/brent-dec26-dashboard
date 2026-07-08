@@ -1146,5 +1146,55 @@
     "m1_m2": -0.09,
     "front_dec": 0.09,
     "front_jun": 1.56
+  },
+  {
+    "ts": "2026-07-08T15:30:13Z",
+    "market_closed": false,
+    "dec26_price": 77.85,
+    "skilling_brent": 75.73,
+    "skilling_asof": "2026-07-06T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 71.59,
+    "dated_brent_asof": "2026-06-29",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 7.7,
+    "brent_dubai_period": "2026M06",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.209,
+      "unit": "mb/d",
+      "source": "zawya.com",
+      "date": "2026-06-05T03:48:29.889Z",
+      "age_days": 33,
+      "sentence": "OIL Iranian oil exports fall to lowest level in six years, data shows Reuters Iran's ⁠exports averaged about 209,000 bpd in May, Vortexa data shows, down sharply from 1.34mln bpd in April and nearly 1.9mln bpd in March Ahmad Ghaddar , Reuters News June 5, 2026 RELATED TOPICS IRAN CHINA (PRC) CONFLICT COMMODITIES MARKETS OIL PHOTO LONDON - Iranian exports of crude oil",
+      "url": "https://www.zawya.com/en/projects/oil-and-gas/iranian-oil-exports-fall-to-lowest-level-in-six-years-data-shows-vjgsscaz"
+    },
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 75.06,
+    "front_code": "CBU26",
+    "front_price": 79.78,
+    "m1_m2": 0.63,
+    "front_dec": 1.93,
+    "front_jun": 4.72
   }
 ]
