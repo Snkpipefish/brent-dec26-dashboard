@@ -1196,5 +1196,55 @@
     "m1_m2": 0.63,
     "front_dec": 1.93,
     "front_jun": 4.72
+  },
+  {
+    "ts": "2026-07-09T15:30:12Z",
+    "market_closed": false,
+    "dec26_price": 75.67,
+    "skilling_brent": 78.86,
+    "skilling_asof": "2026-07-07T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 69.56,
+    "dated_brent_asof": "2026-07-06",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 7.7,
+    "brent_dubai_period": "2026M06",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 2.1,
+      "unit": "mb/d",
+      "source": "cryptobriefing.com",
+      "date": "2026-06-30T18:24:00+00:00",
+      "age_days": 9,
+      "sentence": "To put that number in perspective: before the blockade, Iran was shipping roughly 2.1 million barrels per day.",
+      "url": "https://cryptobriefing.com/iran-50-million-barrels-crude-oil-blockade-lifted/"
+    },
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 73.71,
+    "front_code": "CBU26",
+    "front_price": 76.91,
+    "m1_m2": 0.36,
+    "front_dec": 1.24,
+    "front_jun": 3.2
   }
 ]
