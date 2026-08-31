@@ -1646,5 +1646,55 @@
     "m1_m2": 1.23,
     "front_dec": 3.33,
     "front_jun": 11.09
+  },
+  {
+    "ts": "2026-08-31T15:30:29Z",
+    "market_closed": false,
+    "dec26_price": 88.15,
+    "skilling_brent": 87.75,
+    "skilling_asof": "2026-08-27T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 88.24,
+    "dated_brent_asof": "2026-08-25",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 6.7,
+    "brent_dubai_period": "2026M07",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 1.7,
+      "unit": "mb/d",
+      "source": "cryptobriefing.com",
+      "date": "2026-08-28T21:14:39+00:00",
+      "age_days": 3,
+      "sentence": "Iran’s crude oil exports near zero as US targets banking networks with Operation Economic Outcast A sweeping sanctions campaign and naval enforcement have collapsed Iranian oil shipments from 1.7 million barrels per day to a trickle, with Tehran's own central bank confirming revenues have hit zero.",
+      "url": "https://cryptobriefing.com/iran-oil-exports-near-zero-us-sanctions/"
+    },
+    "dec26_source": "barchart",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 79.56,
+    "front_code": "CBV26",
+    "front_price": null,
+    "m1_m2": null,
+    "front_dec": null,
+    "front_jun": null
   }
 ]
