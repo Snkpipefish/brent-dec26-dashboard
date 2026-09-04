@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Brent — Varighetstese (Dec-26 / CBZ26)</title>
+<title>Brent — Varighetstese (Jun-27 / CBM27)</title>
 <style>
   :root {
     --bg: #0f1115; --panel: #171a21; --line: #262b36;
@@ -96,7 +96,9 @@
   <div class="sub" id="subtitle">Laster logg …</div>
   <div class="note">
     Veddemål på <strong>varighet</strong>, ikke knapphet. Kontrollvariabelen: løfter den
-    <strong>lange enden</strong> (Dec-26 / Jun-27) seg? Fronten bekrefter bare knapphet og gir ingen ny info.
+    <strong>lange enden</strong> seg? Primært <strong>Jun-27 (CBM27)</strong>. Dec-26 (CBZ26) er nå nest
+    fremste måned og blir front 1. oktober — løftet der er delvis roll-effekt, ikke varighet.
+    Fronten bekrefter bare knapphet og gir ingen ny info.
     &nbsp;<a href="tese.html" style="color:var(--accent);font-weight:600">Les hele analysenotatet &amp; trade-planen →</a>
   </div>
 
@@ -118,12 +120,12 @@
   <div class="note" id="diag"></div>
 
   <div class="controls">
-    <label>Bekreftelse (lange enden) $</label>
-    <input type="number" id="confirmInput" value="90" step="0.5" min="0">
-    <label>Utgangspunkt $</label>
-    <input type="number" id="baseInput" value="86" step="0.5" min="0">
+    <label>Bekreftelse (Jun-27) $</label>
+    <input type="number" id="confirmInput" value="84" step="0.5" min="0">
+    <label>Utgangspunkt (Jun-27) $</label>
+    <input type="number" id="baseInput" value="80" step="0.5" min="0">
     <label>Svekkelse mot $</label>
-    <input type="number" id="weakInput" value="80" step="0.5" min="0">
+    <input type="number" id="weakInput" value="76" step="0.5" min="0">
     <label>M1–M2 «lever» >$</label>
     <input type="number" id="mInput" value="1.5" step="0.25" min="0">
   </div>
@@ -131,8 +133,8 @@
   <div class="chartwrap">
     <div id="chart"></div>
     <div class="legend">
-      <span class="lg-dec">Dec-26 (CBZ26)</span>
-      <span class="lg-jun">Jun-27 (CBM27)</span>
+      <span class="lg-jun">Jun-27 (CBM27) — kontrollvariabel</span>
+      <span class="lg-dec">Dec-26 (CBZ26, M2 · ruller mot front)</span>
       <span class="lg-front">Front (kontekst)</span>
       <span class="lg-base">Utgangspunkt</span>
       <span class="lg-conf">Bekreftelse</span>
@@ -159,7 +161,7 @@
       <div class="note">
         Flat price er et <strong>annet instrument</strong> enn lange-enden-signalet over. Skilling-prisen
         hentes nå automatisk fra bot-ens cTrader-feed (siste D1-close). Inngang krever trigger:
-        <strong>(1)</strong> Dec-26 fortsetter opp fra $86, <strong>eller (2)</strong> reeskalering. Pris i sonen alene er ikke nok.
+        <strong>(1)</strong> Jun-27 løfter seg og holder over utgangspunktet, <strong>eller (2)</strong> reeskalering. Pris i sonen alene er ikke nok.
       </div>
     </div>
     <div>
@@ -200,7 +202,14 @@
 <script>
 "use strict";
 
-const CFG = { confirm: 90, base: 86, weak: 80, mLive: 1.5 };
+// Kontrollvariabel: Jun-27 (CBM27). Dec-26 (CBZ26) er nest fremste måned og
+// blir front når CBX26 utløper (siste handledag i september 2026). Løftet i
+// Dec-26 er derfor delvis roll-effekt og teller ikke som «lange enden» lenger.
+// Terskler (redigerbare over): utgangspunkt = Jun-27-nivået 1. juni (~$80),
+// bekreftelse +$4 over det, svekkelse -$4 under.
+const CFG = { confirm: 84, base: 80, weak: 76, mLive: 1.5 };
+const SIG = "jun27_price";
+const DEC26_ROLL_DATE = "2026-10-01";
 
 const $ = (id) => document.getElementById(id);
 const fmt = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v))
@@ -212,7 +221,7 @@ const num = (v) => (typeof v === "number" && !Number.isNaN(v)) ? v : null;
 function getLog() {
   return (window.DEC26_LOG && Array.isArray(window.DEC26_LOG)) ? window.DEC26_LOG : [];
 }
-const validDec = (log) => log.filter(e => typeof e.dec26_price === "number");
+const validSig = (log) => log.filter(e => typeof e[SIG] === "number");
 
 function render() {
   CFG.confirm = parseFloat($("confirmInput").value);
@@ -234,7 +243,7 @@ function render() {
   ["status","trigger","diag"].forEach(id => $(id).style.display = "");
 
   const last = log[log.length - 1];
-  const valids = validDec(log);
+  const valids = validSig(log);
   const latest = valids.length ? valids[valids.length - 1] : null;
   const prev = valids.length > 1 ? valids[valids.length - 2] : null;
   const first = valids.length ? valids[0] : null;
@@ -250,35 +259,38 @@ function render() {
     $("staleBox").innerHTML =
       `<div class="closed"><strong>Marked stengt</strong> — ${last.market_closed_reason || "ikke handledag"}. ` +
       `Viser siste handledags verdi fra <strong>${since}</strong>.</div>`;
-  } else if (last.dec26_price === null || last.dec26_price === undefined) {
+  } else if (typeof last[SIG] !== "number") {
     const since = latest ? latest.ts : "(aldri)";
     $("staleBox").innerHTML =
-      `<div class="stale"><strong>⚠ STALE</strong> — siste henting (${last.ts}) ga ingen Dec-26-pris.<br>` +
-      `Årsak: ${last.dec26_error || "ukjent"}.<br>Viser siste gyldige verdi fra <strong>${since}</strong>.</div>`;
+      `<div class="stale"><strong>⚠ STALE</strong> — siste henting (${last.ts}) ga ingen Jun-27-pris.<br>` +
+      `Årsak: ${last.jun27_error || last.dec26_error || "ukjent"}.<br>Viser siste gyldige verdi fra <strong>${since}</strong>.</div>`;
   }
 
   if (!latest) {
-    $("cards").innerHTML = '<div class="empty" style="grid-column:1/-1">Ingen gyldig pris logget ennå.</div>';
+    $("cards").innerHTML = '<div class="empty" style="grid-column:1/-1">Ingen gyldig Jun-27-pris logget ennå.</div>';
     ["status","trigger","diag"].forEach(id => $(id).style.display = "none");
     $("chart").innerHTML = "";
     return;
   }
 
-  const price = latest.dec26_price;
-  const jun = num(latest.jun27_price);
+  const price = latest[SIG];                       // Jun-27 = kontrollvariabelen
+  const dec = num(latest.dec26_price);
   const m = num(latest.m1_m2);
+  const fjun = num(latest.front_jun);
   const fdec = num(latest.front_dec);
-  const dPrev = prev ? +(price - prev.dec26_price).toFixed(2) : null;
-  const dFirst = first ? +(price - first.dec26_price).toFixed(2) : null;
-  const junPrev = (prev && num(prev.jun27_price) !== null && jun !== null)
-    ? +(jun - prev.jun27_price).toFixed(2) : null;
+  const dPrev = prev ? +(price - prev[SIG]).toFixed(2) : null;
+  const dFirst = first ? +(price - first[SIG]).toFixed(2) : null;
+  const decPrev = (prev && num(prev.dec26_price) !== null && dec !== null)
+    ? +(dec - prev.dec26_price).toFixed(2) : null;
   const toConfirm = +(CFG.confirm - price).toFixed(2);
+  const rolled = new Date() >= new Date(DEC26_ROLL_DATE + "T00:00:00");
+  const rollTxt = rolled ? "er nå front (M1)" : "M2 · blir front 1. okt";
 
   const clsd = (v) => v === null ? "" : v > 0.0001 ? "up" : v < -0.0001 ? "down" : "flat";
 
-  // ---- rad 1: signalet ----
+  // ---- rad 1: signalet (Jun-27) ----
   const row1 = [
-    { k: "Dec-26 nå", v: fmt(price), big: true,
+    { k: "Jun-27 nå (kontrollvariabel)", v: fmt(price), big: true,
       sub: latest.dec26_source ? `kilde: ${latest.dec26_source}` +
         (latest.dec26_crosscheck_ok === false ? " · ⚠ avvik" : "") : "" },
     { k: "Endring siden forrige", v: signed(dPrev), cls: clsd(dPrev), sub: prev ? prev.ts.slice(5,16).replace("T"," ") : "—" },
@@ -286,13 +298,13 @@ function render() {
     { k: "Avstand til bekreftelse", v: toConfirm > 0 ? signed(-toConfirm) : "OVER ✓",
       cls: toConfirm > 0 ? "flat" : "up", sub: `mål $${CFG.confirm.toFixed(0)}+ · utg.pkt $${CFG.base.toFixed(0)}` },
   ];
-  // ---- rad 2: co-signal + struktur ----
+  // ---- rad 2: Dec-26 (sekundær, ruller), front, varighetsspread, prompt ----
   const row2 = [
-    { k: "Jun-27 (co-signal)", v: fmt(jun), cls: clsd(junPrev),
-      sub: junPrev !== null ? `${signed(junPrev)} siden forrige` : "lange enden" },
+    { k: "Dec-26 (sekundær, ruller)", v: fmt(dec), cls: clsd(decPrev),
+      sub: `${decPrev !== null ? signed(decPrev) + " siden forrige · " : ""}${rollTxt}` },
     { k: "Front (kontekst)", v: fmt(num(latest.front_price)), sub: latest.front_code || "" },
-    { k: "Front–Dec spread", v: fdec !== null ? signed(fdec) + " $" : "N/A",
-      sub: "EBC: følg 1–12 mnd, ikke fronten" },
+    { k: "Front–Jun-27 (varighetsspread)", v: fjun !== null ? signed(fjun) + " $" : "N/A",
+      sub: "kompresjon = varighet prises inn" },
     { k: "M1–M2 (prompt)", v: m !== null ? signed(m) + " $" : "N/A",
       cls: (m !== null && m > CFG.mLive) ? "up" : (m !== null ? "down" : ""),
       sub: `«lever» når >+$${CFG.mLive.toFixed(2)}` },
@@ -308,52 +320,53 @@ function render() {
   $("mWatch").className = "pill " + (m === null ? "na" : m > CFG.mLive ? "ok" : m > 0 ? "warn" : "dead");
 
   // ---- tese-status: HOLD / REDUSER / EXIT (fra dokumentets signaltabell) ----
-  // Trendkrav: med daglig kadens skal "stiger"/"faller" bety en VEDVARENDE
-  // bevegelse over de siste dagene, ikke en éndagssprett. Vindu: siste 5
-  // målinger (4 dagsendringer); krever flertall i samme retning + kumulativ
-  // bevegelse. Færre enn 4 målinger -> fall tilbake til dag-til-dag.
-  const win = valids.slice(-5).map(e => e.dec26_price);
+  // Trendkrav på Jun-27: «stiger»/«faller» = VEDVARENDE bevegelse over de
+  // siste dagene, ikke en éndagssprett. Vindu: siste 5 målinger (4 dags-
+  // endringer); flertall i samme retning + kumulativ bevegelse ≥ $0,75.
+  const win = valids.slice(-5).map(e => e[SIG]);
   const chgs = []; for (let i = 1; i < win.length; i++) chgs.push(win[i] - win[i - 1]);
   const cum = win.length >= 2 ? +(win[win.length - 1] - win[0]).toFixed(2) : null;
   const ups = chgs.filter(c => c > 0.0001).length;
   const downs = chgs.filter(c => c < -0.0001).length;
-  let decRising, decFalling;
+  let sigRising, sigFalling;
   if (chgs.length >= 3) {
-    decRising = ups > downs && cum >= 0.75;
-    decFalling = downs > ups && cum <= -0.75;
+    sigRising = ups > downs && cum >= 0.75;
+    sigFalling = downs > ups && cum <= -0.75;
   } else {
-    decRising = dPrev !== null && dPrev >= 0.20;
-    decFalling = dPrev !== null && dPrev <= -0.30;
+    sigRising = dPrev !== null && dPrev >= 0.20;
+    sigFalling = dPrev !== null && dPrev <= -0.30;
   }
   const trendTxt = (chgs.length >= 3)
     ? `${signed(cum)} over siste ${chgs.length} dager (${ups} opp/${downs} ned)`
     : `${signed(dPrev)} siden forrige`;
-  // "Holder over utgangspunktet": de to siste stengningene begge over base.
   const holdsBase = valids.length >= 2
-    && valids[valids.length - 1].dec26_price > CFG.base
-    && valids[valids.length - 2].dec26_price > CFG.base;
+    && valids[valids.length - 1][SIG] > CFG.base
+    && valids[valids.length - 2][SIG] > CFG.base;
   const mLives = m !== null && m > CFG.mLive;
-  const nearWeak = price <= CFG.weak + 2;   // nær $80-sonen
+  const nearWeak = price <= CFG.weak + 2;
+  // Roll-vakt: Dec-26 sterk mens Jun-27 står stille = roll/backwardation, ikke varighet.
+  const rollWarn = (dec !== null && dec >= 90 && !sigRising)
+    ? ` Dec-26 (${fmt(dec)}) er høy, men Jun-27 følger ikke — roll-effekt/backwardation, ikke varighet.` : "";
 
   let st;
   if (nearWeak && (m === null || m <= 0.5)) {
     st = { c: "r", t: "TESEN SVEKKES → EXIT-sone",
-      d: `Dec-26 (${fmt(price)}) er nær $${CFG.weak.toFixed(0)} og M1–M2 mot null. Fatene kan være på vei tilbake — se fysisk sjekk.` };
-  } else if (decFalling && !mLives) {
+      d: `Jun-27 (${fmt(price)}) er nær $${CFG.weak.toFixed(0)} og M1–M2 mot null. Fatene kan være på vei tilbake — se fysisk sjekk.` };
+  } else if (sigFalling && !mLives) {
     st = { c: "o", t: "REDUSER — stram stop",
-      d: `Lange enden svekkes (${trendTxt}) og M1–M2 (${m===null?"N/A":signed(m)}) er under +$${CFG.mLive.toFixed(2)}.` };
-  } else if (price >= CFG.confirm && (jun === null || jun >= CFG.weak)) {
+      d: `Lange enden svekkes (Jun-27 ${trendTxt}) og M1–M2 (${m===null?"N/A":signed(m)}) er under +$${CFG.mLive.toFixed(2)}.` };
+  } else if (price >= CFG.confirm) {
     st = { c: "g", t: "BEKREFTELSE STYRKES",
-      d: `Dec-26 (${fmt(price)}) over $${CFG.confirm.toFixed(0)} — lange enden løfter seg, tesen får medhold.` };
-  } else if (decRising) {
+      d: `Jun-27 (${fmt(price)}) over $${CFG.confirm.toFixed(0)} — lange enden løfter seg, tesen får medhold.` };
+  } else if (sigRising) {
     st = { c: "g", t: "HOLD — tesen lever (stiger)",
-      d: `Dec-26 i vedvarende løft: ${trendTxt}. ${signed(-toConfirm)} til $${CFG.confirm.toFixed(0)}-bekreftelse.` };
+      d: `Jun-27 i vedvarende løft: ${trendTxt}. ${signed(-toConfirm)} til $${CFG.confirm.toFixed(0)}-bekreftelse.` };
   } else if (mLives) {
-    st = { c: "g", t: "HOLD — tesen lever",
-      d: `M1–M2 (${signed(m)}) holder over +$${CFG.mLive.toFixed(2)}. Lange enden uten vedvarende løft (${trendTxt}) — venter.` };
+    st = { c: "y", t: "HOLD — prompt lever, lange enden flat",
+      d: `M1–M2 (${signed(m)}) holder over +$${CFG.mLive.toFixed(2)}, men Jun-27 uten vedvarende løft (${trendTxt}) — knapphet, ikke varighet, ennå.${rollWarn}` };
   } else {
     st = { c: "y", t: "FLAT / AVVENTER",
-      d: `Dec-26 (${fmt(price)}) sidelengs og M1–M2 ${m===null?"N/A":signed(m)} svakt. Ingen bekreftelse ennå.` };
+      d: `Jun-27 (${fmt(price)}) sidelengs og M1–M2 ${m===null?"N/A":signed(m)} svakt. Ingen bekreftelse ennå.${rollWarn}` };
   }
   $("status").className = "status " + st.c;
   $("statusDot").className = "dot " + st.c;
@@ -363,29 +376,35 @@ function render() {
   // ---- inngangstrigger (Skilling-long) ----
   let trg, tcls;
   if (price >= CFG.confirm) {
-    tcls = "ok"; trg = `Dec-26 over $${CFG.confirm.toFixed(0)} — sterkt trigger-tegn.`;
-  } else if (decRising && holdsBase) {
-    tcls = "ok"; trg = `Dec-26 i vedvarende løft (${trendTxt}) og holder over $${CFG.base.toFixed(0)} — trigger-tegn til stede.`;
+    tcls = "ok"; trg = `Jun-27 over $${CFG.confirm.toFixed(0)} — sterkt trigger-tegn.`;
+  } else if (sigRising && holdsBase) {
+    tcls = "ok"; trg = `Jun-27 i vedvarende løft (${trendTxt}) og holder over $${CFG.base.toFixed(0)} — trigger-tegn til stede.`;
   } else if (price > CFG.base && !holdsBase) {
-    tcls = "na"; trg = `Dec-26 (${fmt(price)}) har krysset $${CFG.base.toFixed(0)}, men ikke HOLDT det (forrige stengning under) — ikke aktiv.`;
-  } else if (price > CFG.base && !decRising) {
-    tcls = "na"; trg = `Dec-26 (${fmt(price)}) er over $${CFG.base.toFixed(0)}, men uten vedvarende løft (${trendTxt}) — ikke aktiv.`;
+    tcls = "na"; trg = `Jun-27 (${fmt(price)}) har krysset $${CFG.base.toFixed(0)}, men ikke HOLDT det (forrige stengning under) — ikke aktiv.`;
+  } else if (price > CFG.base && !sigRising) {
+    tcls = "na"; trg = `Jun-27 (${fmt(price)}) er over $${CFG.base.toFixed(0)}, men uten vedvarende løft (${trendTxt}) — ikke aktiv.`;
   } else {
-    tcls = "na"; trg = `Dec-26 har ikke fortsatt opp fra $${CFG.base.toFixed(0)} ennå (nå ${fmt(price)}).`;
+    tcls = "na"; trg = `Jun-27 (${fmt(price)}) er ikke over utgangspunktet $${CFG.base.toFixed(0)} (${trendTxt}) — ikke aktiv.`;
   }
-  const coSig = (jun !== null && junPrev !== null && junPrev > 0) ? ` Jun-27 bekrefter (${signed(junPrev)}).` : "";
+  const decNote = (dec !== null && dec >= 90)
+    ? ` Dec-26 ${fmt(dec)} teller ikke som trigger (${rollTxt}).` : "";
   $("trigger").innerHTML =
-    `<span class="pill ${tcls}">INNGANGSTRIGGER</span> &nbsp;${trg}${coSig}<br>` +
+    `<span class="pill ${tcls}">INNGANGSTRIGGER</span> &nbsp;${trg}${decNote}<br>` +
     `<span class="note" style="display:block;margin-top:8px">Krever minst én: ` +
-    `<strong>(1)</strong> Dec-26 bryter over og HOLDER $${CFG.base.toFixed(0)}+ (vedvarende, ikke éndagssprett), eller <strong>(2)</strong> reeskalering. ` +
+    `<strong>(1)</strong> Jun-27 bryter over og HOLDER $${CFG.base.toFixed(0)}+ (vedvarende, ikke éndagssprett), eller <strong>(2)</strong> reeskalering. ` +
     `Så: kjøp på dropp inn i <strong>$92–95</strong> på Skilling (ikke på spike), hard stop &lt;$88. ` +
     `Pris i sonen alene er <strong>ikke</strong> nok.</span>`;
 
-  // ---- diagnoseregel ----
+  // ---- diagnoseregel (referanse hentes fra første logg-oppføring, ikke hardkodet) ----
+  const refTs = first ? first.ts.slice(0, 10) : "?";
   $("diag").innerHTML =
     `<strong>Diagnoseregel (EBC):</strong> varig endring når lange enden stiger samtidig som — eller mens — fronten faller. ` +
-    `Følg <strong>1–12-måneders-spreaden</strong> (Front–Dec: ~$18 i april → ${fdec!==null?signed(fdec):"~$8"} nå), ikke frontmånedsprisen. ` +
-    `Referanse 1. juni: Dec-26 $80→$86, Jun-27 ~$80, M1–M2 +$2,51, Dated Brent $102,75 (over papir-front).`;
+    `Følg <strong>varighetsspreaden Front–Jun-27</strong> (${fjun!==null?signed(fjun):"N/A"} nå` +
+    `${first && num(first.front_jun)!==null ? `, ${signed(first.front_jun)} ${refTs}` : ""}), ikke frontmånedsprisen. ` +
+    `Front–Dec (${fdec!==null?signed(fdec):"N/A"}) er nå en prompt-spread. ` +
+    `Referanse ${refTs}: Jun-27 ${fmt(first[SIG])}, Dec-26 ${fmt(num(first.dec26_price))}, front ${fmt(num(first.front_price))}, ` +
+    `M1–M2 ${signed(num(first.m1_m2))}` +
+    `${num(first.dated_brent)!==null ? `, Dated Brent ${fmt(first.dated_brent)}` : ""}.`;
 
   // ---- Skilling flat price (live, fra cTrader-feed) ----
   const skEntry = [...log].reverse().find(e => typeof e.skilling_brent === "number");
@@ -462,11 +481,11 @@ function drawChart(valids) {
   const iw = W - padL - padR, ih = H - padT - padB;
   if (valids.length === 0) { $("chart").innerHTML = ""; return; }
 
-  const decV = valids.map(e => e.dec26_price);
-  const junV = valids.map(e => num(e.jun27_price));
+  const junV = valids.map(e => e[SIG]);
+  const decV = valids.map(e => num(e.dec26_price));
   const frontV = valids.map(e => num(e.front_price));
-  const allY = decV
-    .concat(junV.filter(v => v !== null))
+  const allY = junV
+    .concat(decV.filter(v => v !== null))
     .concat(frontV.filter(v => v !== null))
     .concat([CFG.base, CFG.confirm, CFG.weak]);
   let ymin = Math.min(...allY), ymax = Math.max(...allY);
@@ -505,13 +524,13 @@ function drawChart(valids) {
     return out;
   };
   s += linePath(frontV, "#6b7280", 1.5, 0.6);
-  s += linePath(junV, "#b07cff", 2, 0.9);
-  s += linePath(decV, "#4aa3ff", 2.5, 1);
+  s += linePath(decV, "#4aa3ff", 1.8, 0.75);
+  s += linePath(junV, "#b07cff", 2.5, 1);
 
-  decV.forEach((v, i) => { s += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3" fill="#4aa3ff"/>`; });
+  junV.forEach((v, i) => { s += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3" fill="#b07cff"/>`; });
   const li = n - 1;
-  s += `<circle cx="${x(li).toFixed(1)}" cy="${y(decV[li]).toFixed(1)}" r="5" fill="#4aa3ff" stroke="#0f1115" stroke-width="2"/>`;
-  s += `<text x="${x(li).toFixed(1)}" y="${(y(decV[li]) - 12).toFixed(1)}" fill="#e6e9ef" font-size="12" font-weight="700" text-anchor="middle">$${decV[li].toFixed(2)}</text>`;
+  s += `<circle cx="${x(li).toFixed(1)}" cy="${y(junV[li]).toFixed(1)}" r="5" fill="#b07cff" stroke="#0f1115" stroke-width="2"/>`;
+  s += `<text x="${x(li).toFixed(1)}" y="${(y(junV[li]) - 12).toFixed(1)}" fill="#e6e9ef" font-size="12" font-weight="700" text-anchor="middle">$${junV[li].toFixed(2)}</text>`;
 
   const labelIdx = n <= 6 ? valids.map((_, i) => i) : [0, Math.floor(n/3), Math.floor(2*n/3), n-1];
   labelIdx.forEach(i => {

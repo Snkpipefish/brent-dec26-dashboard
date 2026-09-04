@@ -321,10 +321,13 @@
             også skader Kina — Irans viktigste kjøper og diplomatiske støtte.</td>
         <td class="reduce">JUSTERT (betinget)</td></tr>
     <tr><td><strong class="k">Kontrollvariabel</strong></td>
-        <td>Skal leses som <em>spread-kompresjon</em> (Dec-26 stiger mens front faller), ikke absolutt
-            $86-nivå — se Sammendrag og §2.3. Absolutt løft alene kan være backwardation-reprising eller
-            indeksfond-rollover.</td>
-        <td class="hold">JUSTERT i notatet</td></tr>
+        <td>Skal leses som <em>spread-kompresjon</em> (lange enden stiger mens front faller), ikke absolutt
+            nivå — se Sammendrag og §2.3. Absolutt løft alene kan være backwardation-reprising eller
+            indeksfond-rollover. <strong class="k">Flyttet 4. sep 2026:</strong> Dec-26 (CBZ26) er nå nest
+            fremste måned og blir front 1. oktober; løftet fra $86 til $91 er derfor i hovedsak roll-effekt.
+            Kontrollvariabelen er <em>Jun-27 (CBM27)</em> og Front–Jun-27-spreaden. Jun-27 har stått
+            stille rundt $80 siden 1. juni — varighet er ennå <em>ikke</em> priset inn.</td>
+        <td class="reduce">JUSTERT sept. 2026</td></tr>
     <tr><td><strong class="k">Instrument vs. tese</strong></td>
         <td>Tesen lever i kurvestrukturen, men traden er på flat price. Nå rammet som en flat-price-trade
             med kurvetrigger, med eksplisitt erkjent suboptimalt instrument — se trade-planen.</td>
@@ -387,7 +390,8 @@
     ["Dec-26 (CBZ26)", f(e.dec26_price)],
     ["Jun-27 (CBM27)", f(pick("jun27_price"))],
     ["Front" + (e.front_code ? " (" + e.front_code + ")" : ""), f(e.front_price)],
-    ["Front–Dec spread", (typeof e.front_dec === "number" ? sg(e.front_dec) + " $" : "N/A")],
+    ["Front–Jun-27 (varighetsspread)", (typeof e.front_jun === "number" ? sg(e.front_jun) + " $" : "N/A")],
+    ["Front–Dec spread (nå prompt)", (typeof e.front_dec === "number" ? sg(e.front_dec) + " $" : "N/A")],
     ["M1–M2 (prompt)", (typeof e.m1_m2 === "number" ? sg(e.m1_m2) + " $" : "N/A")],
     ["Skilling flat (XBRUSD)", f(pick("skilling_brent"))],
     ["Dated Brent (EIA)", f(pick("dated_brent"))],
@@ -401,10 +405,11 @@
   var as = document.getElementById("autoStatus");
   if (as) {
     var firstE = null;
-    for (var j = 0; j < log.length; j++) { if (typeof log[j].dec26_price === "number") { firstE = log[j]; break; } }
-    var decFirst = firstE ? firstE.dec26_price : null;
+    for (var j = 0; j < log.length; j++) { if (typeof log[j].jun27_price === "number") { firstE = log[j]; break; } }
+    var junFirst = firstE ? firstE.jun27_price : null;
+    var junNow = pick("jun27_price");
+    var decChg = (junFirst !== null && typeof junNow === "number") ? +(junNow - junFirst).toFixed(2) : null;
     var decNow = e.dec26_price;
-    var decChg = (decFirst !== null) ? +(decNow - decFirst).toFixed(2) : null;
     var mNow = pick("m1_m2");
     var datedNow = pick("dated_brent");
     var prem = (typeof datedNow === "number" && typeof e.front_price === "number") ? +(datedNow - e.front_price).toFixed(2) : null;
@@ -420,7 +425,8 @@
     as.innerHTML =
       "<strong class='k'>Status nå (auto, per " + d + "):</strong>" +
       "<ul style='margin:8px 0 0'>" +
-        "<li><strong class='k'>Dec-26 " + f(decNow) + "</strong>" + (decChg !== null ? " — " + sg(decChg) + " siden første logg (" + f(decFirst) + ")" : "") + " → lange enden " + curve + "</li>" +
+        "<li><strong class='k'>Jun-27 " + f(junNow) + "</strong>" + (decChg !== null ? " — " + sg(decChg) + " siden første logg (" + f(junFirst) + ")" : "") + " → lange enden " + curve + "</li>" +
+        "<li><strong class='k'>Dec-26 " + f(decNow) + "</strong> — sekundær; nest fremste måned, blir front 1. okt (roll-effekt, ikke varighet)</li>" +
         "<li><strong class='k'>M1–M2 " + (typeof mNow === "number" ? sg(mNow) + " $" : "N/A") + "</strong> — " + (mOk ? "over" : "under") + " +$1,50</li>" +
         "<li><strong class='k'>Dated Brent " + f(datedNow) + "</strong>" + (prem !== null ? " (" + sg(prem) + " vs front)" : "") + " · Brent–Dubai " + (bd ? sg(bd.brent_dubai_monthly) + " $ (" + (bd.brent_dubai_period || "") + ")" : "N/A") + "</li>" +
       "</ul>" +
