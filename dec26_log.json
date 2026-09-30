@@ -2196,5 +2196,55 @@
     "m1_m2": 7.43,
     "front_dec": 7.43,
     "front_jun": 18.07
+  },
+  {
+    "ts": "2026-09-30T15:30:41Z",
+    "market_closed": false,
+    "dec26_price": 98.96,
+    "skilling_brent": 95.22,
+    "skilling_asof": "2026-09-28T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 114.89,
+    "dated_brent_asof": "2026-09-22",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 11.2,
+    "brent_dubai_period": "2026M08",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": null,
+      "unit": "mb/d",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "dec26_source": "barchart+playwright",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 87.69,
+    "front_code": "CBX26",
+    "front_price": 103.73,
+    "m1_m2": 4.77,
+    "front_dec": 4.77,
+    "front_jun": 16.04
   }
 ]
