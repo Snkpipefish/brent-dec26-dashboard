@@ -3,546 +3,634 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Brent — Varighetstese (Jun-27 / CBM27)</title>
+<title>Brent-olje: varer krisen lenger enn markedet tror?</title>
 <style>
   :root {
-    --bg: #0f1115; --panel: #171a21; --line: #262b36;
-    --txt: #e6e9ef; --muted: #8b93a4;
-    --green: #2ecc71; --yellow: #f1c40f; --orange: #e67e22; --red: #e74c3c;
-    --accent: #4aa3ff; --jun: #b07cff; --grey: #6b7280;
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+    --s1: #2a78d6;             /* Jun-27, hovedserien */
+    --s1-soft: #b7d3f6;
+    --front: #898781;          /* fronten, kontekst */
+    --good: #0ca30c; --good-text: #006300;
+    --warn: #fab219; --warn-text: #7a5200;
+    --serious: #ec835a; --serious-text: #8a3a17;
+    --crit: #d03b3b; --crit-text: #9c2626;
+    --good-bg: rgba(12,163,12,.10); --warn-bg: rgba(250,178,25,.14);
+    --serious-bg: rgba(236,131,90,.14); --crit-bg: rgba(208,59,59,.10); --na-bg: rgba(137,135,129,.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+      --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+      --s1: #3987e5; --s1-soft: #1c5cab; --front: #898781;
+      --good-text: #3fcf3f; --warn-text: #fab219; --serious-text: #ec835a; --crit-text: #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --s1: #3987e5; --s1-soft: #1c5cab; --front: #898781;
+    --good-text: #3fcf3f; --warn-text: #fab219; --serious-text: #ec835a; --crit-text: #e66767;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--txt);
-    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    padding: 24px; max-width: 1040px; margin: 0 auto;
-  }
-  h1 { font-size: 19px; font-weight: 600; margin: 0 0 4px; }
-  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
-       color: var(--muted); margin: 26px 0 12px; }
-  .sub { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-  .card {
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: 10px; padding: 16px;
-  }
-  .card .k { color: var(--muted); font-size: 12px; text-transform: uppercase;
-             letter-spacing: .04em; margin-bottom: 8px; }
-  .card .v { font-size: 28px; font-weight: 700; line-height: 1; }
-  .card .v.big { font-size: 44px; }
-  .card .sub2 { color: var(--muted); font-size: 12px; margin-top: 8px; }
-  .up { color: var(--green); } .down { color: var(--red); } .flat { color: var(--yellow); }
-  .status {
-    margin: 8px 0 4px; padding: 16px 18px; border-radius: 10px;
-    border: 1px solid var(--line); display: flex; align-items: center; gap: 14px;
-  }
-  .dot { width: 18px; height: 18px; border-radius: 50%; flex: none; }
-  .status .label { font-size: 18px; font-weight: 700; }
-  .status .detail { color: var(--muted); font-size: 13px; margin-top: 2px; }
-  .g { background: var(--green); } .y { background: var(--yellow); }
-  .o { background: var(--orange); } .r { background: var(--red); }
-  .status.g { border-color: rgba(46,204,113,.4); background: rgba(46,204,113,.08); }
-  .status.y { border-color: rgba(241,196,15,.4); background: rgba(241,196,15,.08); }
-  .status.o { border-color: rgba(230,126,34,.45); background: rgba(230,126,34,.08); }
-  .status.r { border-color: rgba(231,76,60,.4); background: rgba(231,76,60,.08); }
-  .stale { background: rgba(241,196,15,.12); border: 1px solid rgba(241,196,15,.5);
-    color: var(--yellow); padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-  .closed { background: rgba(74,163,255,.10); border: 1px solid rgba(74,163,255,.4);
-    color: #9ecbff; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-  .trigger {
-    background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
-    border-radius: 8px; padding: 14px 16px; margin: 10px 0; font-size: 14px; line-height: 1.5;
-  }
-  .note { color: var(--muted); font-size: 12.5px; line-height: 1.5; margin: 8px 2px; }
-  .controls { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; flex-wrap: wrap; }
-  .controls label { color: var(--muted); font-size: 13px; }
-  .controls input[type=number] {
-    width: 64px; background: var(--bg); color: var(--txt);
-    border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font-size: 14px;
-  }
-  .chartwrap { background: var(--panel); border: 1px solid var(--line);
-               border-radius: 10px; padding: 16px; margin-top: 8px; }
-  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
-  .legend span::before { content: ""; display: inline-block; width: 12px; height: 3px;
-                         margin-right: 6px; vertical-align: middle; }
-  .lg-dec::before { background: var(--accent); }
-  .lg-jun::before { background: var(--jun); }
-  .lg-front::before { background: var(--grey); }
-  .lg-base::before { background: var(--yellow); }
-  .lg-conf::before { background: var(--green); }
-  .lg-weak::before { background: var(--red); }
-  table.ladder, table.watch { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  table.ladder td, table.watch td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  table.ladder tr:last-child td, table.watch tr:last-child td { border-bottom: none; }
-  .lvl { font-weight: 700; white-space: nowrap; }
-  .lvl.buy { color: var(--accent); } .lvl.stop { color: var(--red); }
-  .lvl.t1 { color: var(--green); } .lvl.t2 { color: var(--jun); }
-  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  body { margin: 0; background: var(--page); color: var(--ink);
+         font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.5; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+  h1 { font-size: 24px; font-weight: 650; margin: 0 0 4px; line-height: 1.25; }
+  h2 { font-size: 18px; font-weight: 650; margin: 40px 0 6px; }
+  h2 .n { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: var(--ink);
+          color: var(--page); font-size: 14px; text-align: center; line-height: 26px; margin-right: 8px; }
+  h3 { font-size: 15px; font-weight: 650; margin: 0 0 6px; }
+  p { margin: 6px 0; }
+  .lead { color: var(--ink2); margin: 0 0 6px; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .sec-intro { color: var(--ink2); margin: 0 0 14px; }
+  a { color: var(--s1); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .answer { display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: start; margin-top: 16px; }
+  .answer .icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center;
+                  justify-content: center; font-size: 28px; font-weight: 700; }
+  .answer .title { font-size: 20px; font-weight: 650; line-height: 1.3; }
+  .answer .why { color: var(--ink2); margin-top: 4px; }
+  .answer.good .icon { background: var(--good-bg); color: var(--good-text); }
+  .answer.warn .icon { background: var(--warn-bg); color: var(--warn-text); }
+  .answer.serious .icon { background: var(--serious-bg); color: var(--serious-text); }
+  .answer.crit .icon { background: var(--crit-bg); color: var(--crit-text); }
+  .qgrid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .q { display: grid; grid-template-columns: 1fr 1.4fr; gap: 24px; }
+  .q .num { font-size: 44px; font-weight: 650; line-height: 1.05; margin: 2px 0 2px; }
+  .q .unit { color: var(--muted); font-size: 13px; }
+  .q .label { color: var(--ink2); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+  .verdict { display: inline-flex; align-items: center; gap: 8px; border-radius: 8px; padding: 6px 10px;
+             font-weight: 600; margin: 10px 0 4px; font-size: 14px; }
+  .verdict.good { background: var(--good-bg); color: var(--good-text); }
+  .verdict.warn { background: var(--warn-bg); color: var(--warn-text); }
+  .verdict.serious { background: var(--serious-bg); color: var(--serious-text); }
+  .verdict.crit { background: var(--crit-bg); color: var(--crit-text); }
+  .verdict.na { background: var(--na-bg); color: var(--ink2); }
+  .explain { color: var(--ink2); font-size: 14px; }
+  .explain strong { color: var(--ink); }
+  .small { font-size: 13px; color: var(--muted); }
+  .kv { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  .kv td { padding: 7px 0; border-top: 1px solid var(--grid); vertical-align: top; }
+  .kv td:first-child { color: var(--ink2); width: 52%; padding-right: 10px; }
+  .kv td:last-child { font-variant-numeric: tabular-nums; text-align: right; }
+  .kv .sub { display: block; color: var(--muted); font-size: 12.5px; }
+  .pill { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .pill.good { background: var(--good-bg); color: var(--good-text); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn-text); }
+  .pill.crit { background: var(--crit-bg); color: var(--crit-text); }
+  .pill.na { background: var(--na-bg); color: var(--ink2); }
+  .ruler { width: 100%; height: 64px; display: block; margin-top: 8px; }
+  .ladder { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .ladder td { padding: 9px 8px; border-top: 1px solid var(--grid); vertical-align: top; }
+  .ladder tr:first-child td { border-top: none; }
+  .ladder .lvl { font-weight: 650; white-space: nowrap; width: 110px; font-variant-numeric: tabular-nums; }
+  .ladder tr.here td { background: var(--s1-soft); }
+  .ladder tr.here td:first-child::before { content: "▶ "; }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
-  .pill.ok { background: rgba(46,204,113,.15); color: var(--green); }
-  .pill.warn { background: rgba(230,126,34,.15); color: var(--orange); }
-  .pill.dead { background: rgba(231,76,60,.15); color: var(--red); }
-  .pill.na { background: rgba(139,147,164,.15); color: var(--muted); }
-  .empty { color: var(--muted); padding: 40px; text-align: center; }
-  .disc { color: var(--muted); font-size: 11.5px; line-height: 1.6; margin: 26px 0 8px;
-          border-top: 1px solid var(--line); padding-top: 14px; }
-  code { background: #0b0d11; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
-  @media (max-width: 760px) { .grid { grid-template-columns: repeat(2,1fr); } .two { grid-template-columns: 1fr; } }
+  .chartcard { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--ink2); margin-top: 6px; }
+  .legend span::before { content: ""; display: inline-block; width: 18px; height: 2px; vertical-align: middle;
+                         margin-right: 6px; border-radius: 2px; }
+  .lg-jun::before { background: var(--s1); } .lg-front::before { background: var(--front); }
+  .lg-thr::before { background: var(--muted); height: 0; border-top: 2px dashed var(--muted); }
+  .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+         border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 14px rgba(0,0,0,.15);
+         display: none; min-width: 150px; }
+  .tip .d { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+  .tip .row { display: flex; justify-content: space-between; gap: 14px; }
+  .tip .row b { font-variant-numeric: tabular-nums; }
+  .tip .key { display: inline-block; width: 12px; height: 2px; vertical-align: middle; margin-right: 6px; }
+  details { margin-top: 12px; }
+  summary { cursor: pointer; color: var(--s1); font-weight: 600; font-size: 14px; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; font-variant-numeric: tabular-nums; }
+  table.data th, table.data td { padding: 5px 8px; text-align: right; border-bottom: 1px solid var(--grid); }
+  table.data th { color: var(--ink2); font-weight: 600; }
+  table.data th:first-child, table.data td:first-child { text-align: left; }
+  .scroll { overflow-x: auto; }
+  .controls { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin-top: 10px; font-size: 14px; }
+  .controls label { color: var(--ink2); }
+  .controls input { width: 70px; background: var(--page); color: var(--ink); border: 1px solid var(--border);
+                    border-radius: 6px; padding: 5px 8px; font-size: 14px; margin-left: 6px; }
+  .notice { border-left: 4px solid var(--warn); background: var(--warn-bg); padding: 10px 14px; border-radius: 6px;
+            margin: 14px 0 0; font-size: 14px; }
+  .notice.crit { border-color: var(--crit); background: var(--crit-bg); }
+  dl.gloss { display: grid; grid-template-columns: 190px 1fr; gap: 10px 18px; margin: 0; font-size: 14px; }
+  dl.gloss dt { font-weight: 650; }
+  dl.gloss dd { margin: 0; color: var(--ink2); }
+  .foot { color: var(--muted); font-size: 12.5px; line-height: 1.6; margin-top: 36px; border-top: 1px solid var(--grid); padding-top: 14px; }
+  @media (max-width: 720px) {
+    .q, .two { grid-template-columns: 1fr; }
+    dl.gloss { grid-template-columns: 1fr; gap: 2px 0; } dl.gloss dd { margin-bottom: 8px; }
+    .q .num { font-size: 38px; }
+  }
 </style>
 </head>
 <body>
-  <h1>Brent — varighetstese på Hormuz-forstyrrelsen</h1>
-  <div class="sub" id="subtitle">Laster logg …</div>
-  <div class="note">
-    Veddemål på <strong>varighet</strong>, ikke knapphet. Kontrollvariabelen: løfter den
-    <strong>lange enden</strong> seg? Primært <strong>Jun-27 (CBM27)</strong>. Dec-26 (CBZ26) er nå nest
-    fremste måned og blir front 1. oktober — løftet der er delvis roll-effekt, ikke varighet.
-    Fronten bekrefter bare knapphet og gir ingen ny info.
-    &nbsp;<a href="tese.html" style="color:var(--accent);font-weight:600">Les hele analysenotatet &amp; trade-planen →</a>
-  </div>
+<div class="wrap">
 
-  <div id="staleBox"></div>
+  <h1>Brent-olje: varer krisen lenger enn markedet tror?</h1>
+  <p class="lead">Hormuz-stredet er stengt og olje er dyrt <em>nå</em>. Det vet alle. Veddemålet er noe annet:
+     at mangelen varer <strong>lenger</strong> enn markedet priser inn. Denne siden svarer på ett spørsmål hver dag:
+     <strong>begynner markedet å tro på en lang krise?</strong></p>
+  <p class="meta" id="meta">Laster logg …</p>
+  <div id="notices"></div>
 
-  <h2>Lange enden av kurven — papir-signalet</h2>
-  <div class="grid" id="cards"></div>
-
-  <div class="status" id="status">
-    <div class="dot" id="statusDot"></div>
+  <div class="card answer" id="answer">
+    <div class="icon" id="ansIcon">…</div>
     <div>
-      <div class="label" id="statusLabel">—</div>
-      <div class="detail" id="statusDetail"></div>
+      <div class="title" id="ansTitle">Laster …</div>
+      <div class="why" id="ansWhy"></div>
     </div>
   </div>
 
-  <div class="trigger" id="trigger"></div>
+  <h2><span class="n">1</span>Tre spørsmål, tre tall</h2>
+  <p class="sec-intro">Alt på siden koker ned til disse tre. Hvert tall har en forklaring på hva det er, og en dom på hva det sier akkurat nå.</p>
 
-  <div class="note" id="diag"></div>
+  <div class="qgrid">
 
-  <div class="controls">
-    <label>Bekreftelse (Jun-27) $</label>
-    <input type="number" id="confirmInput" value="84" step="0.5" min="0">
-    <label>Utgangspunkt (Jun-27) $</label>
-    <input type="number" id="baseInput" value="80" step="0.5" min="0">
-    <label>Svekkelse mot $</label>
-    <input type="number" id="weakInput" value="76" step="0.5" min="0">
-    <label>M1–M2 «lever» >$</label>
-    <input type="number" id="mInput" value="1.5" step="0.25" min="0">
-  </div>
-
-  <div class="chartwrap">
-    <div id="chart"></div>
-    <div class="legend">
-      <span class="lg-jun">Jun-27 (CBM27) — kontrollvariabel</span>
-      <span class="lg-dec">Dec-26 (CBZ26, M2 · ruller mot front)</span>
-      <span class="lg-front">Front (kontekst)</span>
-      <span class="lg-base">Utgangspunkt</span>
-      <span class="lg-conf">Bekreftelse</span>
-      <span class="lg-weak">Svekkelse</span>
+    <div class="card q">
+      <div>
+        <h3>Tror markedet at krisen varer?</h3>
+        <div class="label">Pris på olje levert juni 2027</div>
+        <div class="num" id="q1num">—</div>
+        <div class="unit">dollar per fat · kontrakten «Jun-27»</div>
+        <div class="verdict" id="q1verdict">—</div>
+        <div class="small" id="q1trend"></div>
+        <svg class="ruler" id="ruler" viewBox="0 0 400 64" aria-label="Skala for Jun-27-prisen"></svg>
+      </div>
+      <div class="explain">
+        <p><strong>Hva er dette?</strong> Prisen noen i dag betaler for ett fat Brent-olje som leveres i juni 2027,
+           altså om rundt ni måneder. Det er markedets gjetning på hvordan verden ser ut da.</p>
+        <p><strong>Hvorfor er det viktig?</strong> Tror markedet at Hormuz åpner og alt normaliseres, ligger denne prisen
+           lavt uansett hvor dyrt olje er i dag. 1. juni lå den på <span id="q1first">—</span>. Stiger den, betyr det at
+           markedet begynner å tro at mangelen <em>varer</em>. Det er hele tesen.</p>
+        <p><strong>Nivåene:</strong> under <b id="thrWeak">$76</b> = tesen svekkes ·
+           <b id="thrBase">$80</b> = utgangspunktet fra 1. juni ·
+           over <b id="thrConf">$84</b> = markedet bekrefter tesen.</p>
+      </div>
     </div>
+
+    <div class="card q">
+      <div>
+        <h3>Er det mangel på olje akkurat nå?</h3>
+        <div class="label">Ekstra betalt for olje neste måned</div>
+        <div class="num" id="q2num">—</div>
+        <div class="unit">dollar per fat · «M1–M2»</div>
+        <div class="verdict" id="q2verdict">—</div>
+        <table class="kv">
+          <tr><td>Oljepris nå (fremste kontrakt) <span class="sub" id="q2frontcode"></span></td><td id="q2front">—</td></tr>
+          <tr><td>Fysisk olje (Dated Brent) <span class="sub" id="q2datedsub"></span></td><td id="q2dated">—</td></tr>
+          <tr><td>Fysisk minus papir <span class="sub">positivt = de som trenger olje i dag betaler mer enn papir-markedet</span></td><td id="q2prem">—</td></tr>
+        </table>
+      </div>
+      <div class="explain">
+        <p><strong>Hva er dette?</strong> Forskjellen mellom prisen for olje levert <em>neste måned</em> og olje levert
+           <em>måneden etter</em>. Når folk betaler ekstra for å få oljen fort, er tallet positivt.</p>
+        <p><strong>Hvorfor er det viktig?</strong> Dette tallet sier om det er trangt <em>i dag</em>. Over
+           <b id="thrM">+$1,50</b> betyr «det er mangel nå». Går det mot null, slipper presset og fatene er på vei tilbake.</p>
+        <p><strong>Men merk:</strong> mangel nå er ikke det samme som lang krise. Dette tallet kan være høyt selv om
+           markedet tror alt er over til jul. Derfor er spørsmål 1 det viktigste.</p>
+      </div>
+    </div>
+
+    <div class="card q">
+      <div>
+        <h3>Kommer oljen tilbake?</h3>
+        <div class="label">Irans oljeeksport</div>
+        <div class="num" id="q3num">—</div>
+        <div class="unit" id="q3src">millioner fat per dag · siste nyhetssitat</div>
+        <div class="verdict" id="q3verdict">—</div>
+        <table class="kv">
+          <tr><td>Brent minus Dubai-olje (månedssnitt) <span class="sub" id="q3bdsub">Verdensbanken</span></td><td id="q3bd">—</td></tr>
+          <tr><td>Brent–Dubai fra nyheter <span class="sub" id="q3efssub"></span></td><td id="q3efs">—</td></tr>
+          <tr><td>Forties-tillegg <span class="sub" id="q3fortsub"></span></td><td id="q3fort">—</td></tr>
+        </table>
+      </div>
+      <div class="explain">
+        <p><strong>Hva er dette?</strong> Hvor mye olje Iran faktisk får skipet ut, ifølge ferske nyhetsartikler
+           (tankersporing som Kpler og Vortexa). Før krisen var det rundt 1,5 til 1,7 millioner fat per dag.</p>
+        <p><strong>Hvorfor er det viktig?</strong> Dette er «tesen dør hvis»-tallet. Kommer Irans eksport tilbake over
+           <b>1 million fat per dag</b>, er fatene faktisk på vei ut i markedet. Da er det ingen lang krise, uansett hva
+           kurven sier. Da går du ut.</p>
+        <p><strong>Om tallene:</strong> ingen av disse finnes gratis i sanntid. De hentes fra siste nyhetsartikkel som
+           siterer et tall, med kilde og dato. Står det «ingen ferskt sitat», er det ærlig: vi vet ikke.</p>
+      </div>
+    </div>
+
   </div>
 
+  <details class="card" style="margin-top:14px">
+    <summary>Juster nivåene</summary>
+    <div class="controls">
+      <label>Svekkelse <input type="number" id="weakInput" value="76" step="0.5"></label>
+      <label>Utgangspunkt <input type="number" id="baseInput" value="80" step="0.5"></label>
+      <label>Bekreftelse <input type="number" id="confirmInput" value="84" step="0.5"></label>
+      <label>Mangel nå over <input type="number" id="mInput" value="1.5" step="0.25"></label>
+    </div>
+    <p class="small">Utgangspunktet er Jun-27-prisen 1. juni 2026. Pluss/minus fire dollar er et forslag, ikke fra notatet.</p>
+  </details>
+
+  <h2><span class="n">2</span>Hva gjør du på Skilling?</h2>
+  <p class="sec-intro">Tesen handler om kurven, men det du kan kjøpe på Skilling er vanlig oljepris («Oil Brent»).
+     Det er et dårligere verktøy, fordi den prisen hopper på hver fredsoverskrift. Derfor styrer regler, ikke magefølelse.</p>
   <div class="two">
-    <div>
-      <h2>Trade-plan — Oil Brent (XBRUSD) på Skilling</h2>
-      <div class="card" id="skillingNow" style="margin-bottom:14px">
-        <div class="k">Skilling flat price (XBRUSD) — live</div>
-        <div class="v" id="skillingVal">—</div>
-        <div class="sub2" id="skillingZone"></div>
-      </div>
-      <div class="panel">
-        <table class="ladder">
-          <tr><td class="lvl t2">$115–120+</td><td>Strukket mål — kun ved reeskalering / MOU ryker.</td></tr>
-          <tr><td class="lvl t1">$104–108</td><td>Første mål — lukker gapet til fysisk spot. <strong>Ta 50%</strong>, flytt stop til inngang.</td></tr>
-          <tr><td class="lvl buy">$92–95</td><td>Inngangssone — der mai-fallet stabiliserte. Kjøp på <strong>fredsoverskrift-dropp, ikke spike</strong>. Krever trigger.</td></tr>
-          <tr><td class="lvl stop">&lt; $88</td><td>Hard stop — flat-price-instrumentet bekrefter ikke lenger. Dreper <strong>traden</strong>, ikke nødvendigvis tesen.</td></tr>
-        </table>
-      </div>
-      <div class="note">
-        Flat price er et <strong>annet instrument</strong> enn lange-enden-signalet over. Skilling-prisen
-        hentes nå automatisk fra bot-ens cTrader-feed (siste D1-close). Inngang krever trigger:
-        <strong>(1)</strong> Jun-27 løfter seg og holder over utgangspunktet, <strong>eller (2)</strong> reeskalering. Pris i sonen alene er ikke nok.
-      </div>
+    <div class="card">
+      <div class="label">Skilling-pris nå</div>
+      <div class="num" id="sknum">—</div>
+      <div class="unit" id="skasof"></div>
+      <div class="verdict" id="skzone">—</div>
+      <div class="verdict" id="trigger" style="display:block;margin-top:10px">—</div>
+      <p class="explain" id="triggerwhy"></p>
     </div>
-    <div>
-      <h2>Fysisk — «tesen dør hvis …» (auto + nyhets-sitert)</h2>
-      <div class="panel">
-        <table class="watch">
-          <tr><td><strong>Iran-lastinger</strong><div class="note" style="margin:2px 0 0">Normaliseres &gt;1 mb/d → fatene kommer tilbake → EXIT. Nyhets-sitert.</div></td>
-              <td style="text-align:right"><span class="pill na" id="iranWatch">—</span></td></tr>
-          <tr><td><strong>Forties-diff</strong><div class="note" style="margin:2px 0 0">Mot Dated Brent. Nordsjø-stramhet. Nyhets-sitert (Reuters).</div></td>
-              <td style="text-align:right"><span class="pill na" id="fortiesWatch">—</span></td></tr>
-          <tr><td><strong>Dated Brent (fysisk spot)</strong><div class="note" style="margin:2px 0 0">Over papir-front = fysisk nekter å normalisere → tesen støttes. EIA-proxy.</div></td>
-              <td style="text-align:right"><span class="pill na" id="datedWatch">—</span></td></tr>
-          <tr><td><strong>Brent-Dubai EFS</strong><div class="note" style="margin:2px 0 0">Papir-spread Brent vs Dubai swaps. Nyhets-sitert.</div></td>
-              <td style="text-align:right"><span class="pill na" id="efsWatch">—</span></td></tr>
-          <tr><td><strong>Brent-Dubai (månedlig)</strong><div class="note" style="margin:2px 0 0">World Bank månedssnitt, ~1 mnd etterslep — IKKE prompt-EFS.</div></td>
-              <td style="text-align:right"><span class="pill na" id="bdWatch">—</span></td></tr>
-          <tr><td><strong>M1–M2 prompt</strong><div class="note" style="margin:2px 0 0">Mot null → prompt-stresset slipper.</div></td>
-              <td style="text-align:right"><span class="pill na" id="mWatch">—</span></td></tr>
-        </table>
-      </div>
-      <div class="note">
-        <strong>Kilder:</strong> Dated Brent = EIA (auto). Brent-Dubai månedlig = World Bank (auto).
-        Iran-lastinger / Forties / EFS = automatisk hentet fra ferske nyhetsartikler (Bing News → kilde + dato);
-        peker på tallet for en gitt måned, ikke sanntid. Hold over en verdi for å se sitatet.
-        Argus/Platts/tankersporing-tall finnes ikke gratis i sanntid.
-      </div>
+    <div class="card">
+      <h3>Reglene</h3>
+      <table class="ladder" id="ladder">
+        <tr data-z="t2"><td class="lvl">$115–120+</td><td>Strukket mål. Bare hvis krisen eskalerer igjen.</td></tr>
+        <tr data-z="t1"><td class="lvl">$104–108</td><td>Første mål. Selg halve posisjonen og flytt stoppen til der du kjøpte.</td></tr>
+        <tr data-z="over"><td class="lvl">$95–104</td><td>Over kjøpssonen. Vent på et dropp inn i sonen. Ikke jag prisen.</td></tr>
+        <tr data-z="buy"><td class="lvl">$92–95</td><td>Kjøpssonen. Kjøp på et fall etter en fredsoverskrift, ikke på et hopp opp. Krever at spørsmål 1 sier ja.</td></tr>
+        <tr data-z="gap"><td class="lvl">$88–92</td><td>Mellom stopp og kjøpssone. Ingenting å gjøre.</td></tr>
+        <tr data-z="stop"><td class="lvl">under $88</td><td>Hard stopp. Ute av traden. Tesen kan fortsatt leve, men ikke denne posisjonen.</td></tr>
+      </table>
+      <p class="small">Pilen viser hvor prisen er nå.</p>
     </div>
   </div>
 
-  <div class="disc">
-    Analyse, ikke investeringsråd. Terminpriser og kalenderspreads kryssjekket mot Barchart/oilprice (±$0,03);
-    aldri gjettede tall — feiler en henting vises siste gyldige verdi med «stale»-merke. Dated Brent / Forties /
-    lastinger er ikke i feedet og må følges manuelt. Posisjonsstørrelse er ditt eget ansvar. Flat price piskes av
-    fredsoverskrifter: du kan ha rett om fundamentene og likevel bli stoppet ut — reglene beskytter, ikke instrumentet.
+  <h2><span class="n">3</span>Utviklingen siden 1. juni</h2>
+  <p class="sec-intro">Blå linje er spørsmål 1 (Jun-27). Grå linje er dagens oljepris, bare som sammenligning.
+     Hold musen over grafen for å se tallene per dag. Hull i linjene er dager uten måling.</p>
+  <div class="card chartcard">
+    <div class="chart" id="chart"></div>
+    <div class="tip" id="tip"></div>
+    <div class="legend">
+      <span class="lg-jun">Jun-27 (spørsmål 1)</span>
+      <span class="lg-front">Oljepris nå (fremste kontrakt)</span>
+      <span class="lg-thr">Nivåer: svekkelse / utgangspunkt / bekreftelse</span>
+    </div>
+    <details>
+      <summary>Vis alle målingene som tabell</summary>
+      <div class="scroll"><table class="data" id="datatable"></table></div>
+    </details>
   </div>
+
+  <h2><span class="n">4</span>Ordliste</h2>
+  <div class="card">
+    <dl class="gloss">
+      <dt>Brent</dt><dd>Nordsjø-olje. Den viktigste prisreferansen for olje i Europa og store deler av verden.</dd>
+      <dt>Fat</dt><dd>159 liter. Alle priser her er dollar per fat.</dd>
+      <dt>Terminkontrakt</dt><dd>En avtale om å kjøpe olje til en fast pris på et bestemt tidspunkt fremover. Det finnes én kontrakt per måned, flere år frem. Prisene på disse er «kurven».</dd>
+      <dt>Fremste kontrakt («front»)</dt><dd>Kontrakten som leverer først, altså neste måned. Det er den prisen avisene mener når de sier «oljeprisen». Den skifter navn hver måned (CBX26 = november 2026, CBZ26 = desember 2026).</dd>
+      <dt>Jun-27 (CBM27)</dt><dd>Kontrakten som leverer i juni 2027. Vårt hovedtall. Ligger langt nok frem til at dagens støy ikke slår inn, men nær nok til at markedet faktisk handler den.</dd>
+      <dt>Dec-26 (CBZ26)</dt><dd>Kontrakten for desember 2026. Fram til september var dette hovedtallet. Nå er den så nær at den 1. oktober selv blir «fronten», så den sier ikke lenger noe om lang sikt. Derfor byttet vi til Jun-27.</dd>
+      <dt>M1–M2</dt><dd>Prisen på fremste kontrakt minus prisen på den neste. Positivt tall = folk betaler ekstra for olje raskt = mangel nå. Kalles også backwardation når positivt, contango når negativt.</dd>
+      <dt>Dated Brent</dt><dd>Prisen på fysiske fat som skal lastes de nærmeste ukene. Papir-markedet (terminkontrakter) kan falle på en overskrift, mens fysiske fat fortsatt er dyre. Vi bruker et gratis tall fra amerikanske EIA, som ligger noen dager etter.</dd>
+      <dt>Flat price / Oil Brent på Skilling</dt><dd>Vanlig oljepris som CFD. Følger omtrent fronten. Koster finansiering hver natt, så det er en tidsbegrenset trade.</dd>
+      <dt>Brent minus Dubai</dt><dd>Hvor mye dyrere Nordsjø-olje er enn Midtøsten-olje. Høyt tall = olje fra Gulfen er billig fordi den er innestengt, mens olje utenfor er dyr. Verdensbank-tallet er et månedssnitt med rundt en måneds forsinkelse.</dd>
+      <dt>Forties</dt><dd>Et av Nordsjø-feltene bak Brent-prisen. Tillegget over Dated Brent viser hvor trangt det er i Nordsjøen. Sjelden sitert gratis.</dd>
+      <dt>Hormuz</dt><dd>Stredet mellom Iran og Oman. Rundt en femdel av verdens olje går gjennom det. Stengt og minelagt siden mars 2026.</dd>
+      <dt>Stale</dt><dd>Siste henting feilet, så siden viser forrige gyldige tall og sier fra om det.</dd>
+    </dl>
+  </div>
+
+  <p class="foot">Analyse, ikke investeringsråd. Tallene hentes én gang per handledag (17:30 norsk tid) fra Barchart, kryssjekket mot oilprice.
+     Ingen tall gjettes: feiler en henting, vises forrige verdi med merknad. Hele resonnementet står i
+     <a href="tese.html">analysenotatet og trade-planen</a>. Den gamle, tettere siden finnes fortsatt som
+     <a href="dec26_dashboard_gammel.html">gammel visning</a>.</p>
+</div>
 
 <script src="dec26_log.js" onerror="window.__logLoadError=true"></script>
 <script>
 "use strict";
-
-// Kontrollvariabel: Jun-27 (CBM27). Dec-26 (CBZ26) er nest fremste måned og
-// blir front når CBX26 utløper (siste handledag i september 2026). Løftet i
-// Dec-26 er derfor delvis roll-effekt og teller ikke som «lange enden» lenger.
-// Terskler (redigerbare over): utgangspunkt = Jun-27-nivået 1. juni (~$80),
-// bekreftelse +$4 over det, svekkelse -$4 under.
-const CFG = { confirm: 84, base: 80, weak: 76, mLive: 1.5 };
 const SIG = "jun27_price";
-const DEC26_ROLL_DATE = "2026-10-01";
-
+const CFG = { confirm: 84, base: 80, weak: 76, mLive: 1.5 };
 const $ = (id) => document.getElementById(id);
-const fmt = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v))
-  ? "N/A" : "$" + Number(v).toFixed(d);
-const signed = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v))
-  ? "N/A" : (v >= 0 ? "+" : "") + Number(v).toFixed(d);
 const num = (v) => (typeof v === "number" && !Number.isNaN(v)) ? v : null;
-
-function getLog() {
-  return (window.DEC26_LOG && Array.isArray(window.DEC26_LOG)) ? window.DEC26_LOG : [];
+const money = (v, d = 2) => v === null ? "—" : "$" + v.toFixed(d).replace(".", ",");
+const signed = (v, d = 2) => v === null ? "—" : (v > 0 ? "+" : v < 0 ? "−" : "") + "$" + Math.abs(v).toFixed(d).replace(".", ",");
+const MND = ["jan","feb","mar","apr","mai","jun","jul","aug","sep","okt","nov","des"];
+function dato(ts) {
+  if (!ts) return "—";
+  const d = new Date(ts); if (isNaN(d)) return String(ts).slice(0, 10);
+  return `${d.getDate()}. ${MND[d.getMonth()]} ${d.getFullYear()}`;
 }
-const validSig = (log) => log.filter(e => typeof e[SIG] === "number");
+function datoKort(ts) { const d = new Date(ts); return isNaN(d) ? "" : `${d.getDate()}. ${MND[d.getMonth()]}`; }
+function setVerdict(id, cls, icon, text) {
+  const el = $(id); el.className = "verdict " + cls; el.textContent = "";
+  const i = document.createElement("span"); i.textContent = icon; el.appendChild(i);
+  const t = document.createElement("span"); t.textContent = text; el.appendChild(t);
+}
+function setAnswer(cls, icon, title, why) {
+  $("answer").className = "card answer " + cls; $("ansIcon").textContent = icon;
+  $("ansTitle").textContent = title; $("ansWhy").textContent = why;
+}
+const getLog = () => (window.DEC26_LOG && Array.isArray(window.DEC26_LOG)) ? window.DEC26_LOG : [];
+const lastWith = (log, pred) => [...log].reverse().find(pred) || null;
+const dagerSiden = (d, ref) => { const a = new Date(d), b = new Date(ref); return (isNaN(a) || isNaN(b)) ? null : Math.round((b - a) / 86400000); };
+const alderTxt = (dager) => dager === null ? "" : dager > 90 ? " · gammelt tall" : dager > 45 ? " · over 45 dager gammelt" : "";
 
 function render() {
   CFG.confirm = parseFloat($("confirmInput").value);
   CFG.base = parseFloat($("baseInput").value);
   CFG.weak = parseFloat($("weakInput").value);
   CFG.mLive = parseFloat($("mInput").value);
+  $("thrWeak").textContent = money(CFG.weak, 0); $("thrBase").textContent = money(CFG.base, 0);
+  $("thrConf").textContent = money(CFG.confirm, 0); $("thrM").textContent = signed(CFG.mLive);
 
   const log = getLog();
+  $("notices").textContent = "";
   if (window.__logLoadError || log.length === 0) {
-    $("subtitle").textContent = "";
-    $("cards").innerHTML = "";
-    $("staleBox").innerHTML =
-      '<div class="empty">Ingen logg funnet ennå.<br>Kjør <code>.venv/bin/python dec26_monitor.py</code> ' +
-      'og oppdater siden.</div>';
-    ["status","trigger","diag"].forEach(id => $(id).style.display = "none");
-    $("chart").innerHTML = "";
+    $("meta").textContent = "Ingen logg funnet. Kjør dec26_monitor.py og last siden på nytt.";
+    setAnswer("warn", "?", "Ingen data ennå", "");
     return;
   }
-  ["status","trigger","diag"].forEach(id => $(id).style.display = "");
-
+  const valids = log.filter(e => typeof e[SIG] === "number");
   const last = log[log.length - 1];
-  const valids = validSig(log);
-  const latest = valids.length ? valids[valids.length - 1] : null;
-  const prev = valids.length > 1 ? valids[valids.length - 2] : null;
-  const first = valids.length ? valids[0] : null;
+  const latest = valids[valids.length - 1] || null;
+  const prev = valids[valids.length - 2] || null;
+  const first = valids[0] || null;
+  $("meta").textContent = `${valids.length} målinger · siste ${dato(last.ts)}` +
+    (latest && latest !== last ? ` · siste gyldige Jun-27-pris ${dato(latest.ts)}` : "");
 
-  const lastLabel = last.market_closed ? "marked stengt" : "siste henting";
-  $("subtitle").textContent =
-    `${log.length} oppføring(er) · ${lastLabel} ${last.ts}` +
-    (latest ? ` · siste gyldige ${latest.ts}` : "");
-
-  $("staleBox").innerHTML = "";
   if (last.market_closed) {
-    const since = latest ? latest.ts : "(ingen)";
-    $("staleBox").innerHTML =
-      `<div class="closed"><strong>Marked stengt</strong> — ${last.market_closed_reason || "ikke handledag"}. ` +
-      `Viser siste handledags verdi fra <strong>${since}</strong>.</div>`;
+    const n = document.createElement("div"); n.className = "notice";
+    n.textContent = `Markedet var stengt (${last.market_closed_reason || "ikke handledag"}). Viser tall fra ${latest ? dato(latest.ts) : "—"}.`;
+    $("notices").appendChild(n);
   } else if (typeof last[SIG] !== "number") {
-    const since = latest ? latest.ts : "(aldri)";
-    $("staleBox").innerHTML =
-      `<div class="stale"><strong>⚠ STALE</strong> — siste henting (${last.ts}) ga ingen Jun-27-pris.<br>` +
-      `Årsak: ${last.jun27_error || last.dec26_error || "ukjent"}.<br>Viser siste gyldige verdi fra <strong>${since}</strong>.</div>`;
+    const n = document.createElement("div"); n.className = "notice crit";
+    n.textContent = `Siste henting (${dato(last.ts)}) ga ingen Jun-27-pris (${last.jun27_error || last.dec26_error || "ukjent årsak"}). Viser tall fra ${latest ? dato(latest.ts) : "—"}.`;
+    $("notices").appendChild(n);
   }
+  if (!latest) { setAnswer("warn", "?", "Ingen gyldig Jun-27-pris logget ennå", ""); return; }
 
-  if (!latest) {
-    $("cards").innerHTML = '<div class="empty" style="grid-column:1/-1">Ingen gyldig Jun-27-pris logget ennå.</div>';
-    ["status","trigger","diag"].forEach(id => $(id).style.display = "none");
-    $("chart").innerHTML = "";
-    return;
-  }
-
-  const price = latest[SIG];                       // Jun-27 = kontrollvariabelen
-  const dec = num(latest.dec26_price);
+  // ---------- Spørsmål 1: Jun-27 ----------
+  const price = latest[SIG];
   const m = num(latest.m1_m2);
-  const fjun = num(latest.front_jun);
-  const fdec = num(latest.front_dec);
-  const dPrev = prev ? +(price - prev[SIG]).toFixed(2) : null;
-  const dFirst = first ? +(price - first[SIG]).toFixed(2) : null;
-  const decPrev = (prev && num(prev.dec26_price) !== null && dec !== null)
-    ? +(dec - prev.dec26_price).toFixed(2) : null;
-  const toConfirm = +(CFG.confirm - price).toFixed(2);
-  const rolled = new Date() >= new Date(DEC26_ROLL_DATE + "T00:00:00");
-  const rollTxt = rolled ? "er nå front (M1)" : "M2 · blir front 1. okt";
-
-  const clsd = (v) => v === null ? "" : v > 0.0001 ? "up" : v < -0.0001 ? "down" : "flat";
-
-  // ---- rad 1: signalet (Jun-27) ----
-  const row1 = [
-    { k: "Jun-27 nå (kontrollvariabel)", v: fmt(price), big: true,
-      sub: latest.dec26_source ? `kilde: ${latest.dec26_source}` +
-        (latest.dec26_crosscheck_ok === false ? " · ⚠ avvik" : "") : "" },
-    { k: "Endring siden forrige", v: signed(dPrev), cls: clsd(dPrev), sub: prev ? prev.ts.slice(5,16).replace("T"," ") : "—" },
-    { k: "Endring siden første", v: signed(dFirst), cls: clsd(dFirst), sub: first ? first.ts.slice(5,16).replace("T"," ") : "—" },
-    { k: "Avstand til bekreftelse", v: toConfirm > 0 ? signed(-toConfirm) : "OVER ✓",
-      cls: toConfirm > 0 ? "flat" : "up", sub: `mål $${CFG.confirm.toFixed(0)}+ · utg.pkt $${CFG.base.toFixed(0)}` },
-  ];
-  // ---- rad 2: Dec-26 (sekundær, ruller), front, varighetsspread, prompt ----
-  const row2 = [
-    { k: "Dec-26 (sekundær, ruller)", v: fmt(dec), cls: clsd(decPrev),
-      sub: `${decPrev !== null ? signed(decPrev) + " siden forrige · " : ""}${rollTxt}` },
-    { k: "Front (kontekst)", v: fmt(num(latest.front_price)), sub: latest.front_code || "" },
-    { k: "Front–Jun-27 (varighetsspread)", v: fjun !== null ? signed(fjun) + " $" : "N/A",
-      sub: "kompresjon = varighet prises inn" },
-    { k: "M1–M2 (prompt)", v: m !== null ? signed(m) + " $" : "N/A",
-      cls: (m !== null && m > CFG.mLive) ? "up" : (m !== null ? "down" : ""),
-      sub: `«lever» når >+$${CFG.mLive.toFixed(2)}` },
-  ];
-  const cardHtml = (c) =>
-    `<div class="card"><div class="k">${c.k}</div>` +
-    `<div class="v ${c.big ? "big" : ""} ${c.cls || ""}">${c.v}</div>` +
-    `<div class="sub2">${c.sub}</div></div>`;
-  $("cards").innerHTML = row1.concat(row2).map(cardHtml).join("");
-
-  // M1-M2 i fysisk-watch
-  $("mWatch").textContent = m !== null ? `${signed(m)} $/fat` : "—";
-  $("mWatch").className = "pill " + (m === null ? "na" : m > CFG.mLive ? "ok" : m > 0 ? "warn" : "dead");
-
-  // ---- tese-status: HOLD / REDUSER / EXIT (fra dokumentets signaltabell) ----
-  // Trendkrav på Jun-27: «stiger»/«faller» = VEDVARENDE bevegelse over de
-  // siste dagene, ikke en éndagssprett. Vindu: siste 5 målinger (4 dags-
-  // endringer); flertall i samme retning + kumulativ bevegelse ≥ $0,75.
+  const front = num(latest.front_price);
+  const dPrev = prev ? price - prev[SIG] : null;
   const win = valids.slice(-5).map(e => e[SIG]);
   const chgs = []; for (let i = 1; i < win.length; i++) chgs.push(win[i] - win[i - 1]);
-  const cum = win.length >= 2 ? +(win[win.length - 1] - win[0]).toFixed(2) : null;
-  const ups = chgs.filter(c => c > 0.0001).length;
-  const downs = chgs.filter(c => c < -0.0001).length;
-  let sigRising, sigFalling;
-  if (chgs.length >= 3) {
-    sigRising = ups > downs && cum >= 0.75;
-    sigFalling = downs > ups && cum <= -0.75;
-  } else {
-    sigRising = dPrev !== null && dPrev >= 0.20;
-    sigFalling = dPrev !== null && dPrev <= -0.30;
-  }
-  const trendTxt = (chgs.length >= 3)
-    ? `${signed(cum)} over siste ${chgs.length} dager (${ups} opp/${downs} ned)`
-    : `${signed(dPrev)} siden forrige`;
-  const holdsBase = valids.length >= 2
-    && valids[valids.length - 1][SIG] > CFG.base
-    && valids[valids.length - 2][SIG] > CFG.base;
+  const cum = win.length >= 2 ? win[win.length - 1] - win[0] : null;
+  const ups = chgs.filter(c => c > 0.0001).length, downs = chgs.filter(c => c < -0.0001).length;
+  let rising, falling;
+  if (chgs.length >= 3) { rising = ups > downs && cum >= 0.75; falling = downs > ups && cum <= -0.75; }
+  else { rising = dPrev !== null && dPrev >= 0.20; falling = dPrev !== null && dPrev <= -0.30; }
+  const trendTxt = chgs.length >= 3
+    ? `${signed(cum)} over de siste ${chgs.length + 1} målingene (${ups} dager opp, ${downs} ned)`
+    : `${signed(dPrev)} siden forrige måling`;
+  const holdsBase = valids.length >= 2 && price > CFG.base && prev[SIG] > CFG.base;
   const mLives = m !== null && m > CFG.mLive;
+
+  $("q1num").textContent = money(price);
+  $("q1first").textContent = first ? money(first[SIG]) + " (" + dato(first.ts) + ")" : "—";
+  $("q1trend").textContent = `Siden forrige måling: ${signed(dPrev)} · trend: ${trendTxt}` +
+    (first ? ` · siden 1. juni: ${signed(price - first[SIG])}` : "");
+  if (price >= CFG.confirm) setVerdict("q1verdict", "good", "✓", `Over ${money(CFG.confirm,0)}. Markedet bekrefter at krisen varer.`);
+  else if (price > CFG.base && rising) setVerdict("q1verdict", "good", "↗", `Stiger jevnt, men ikke over ${money(CFG.confirm,0)} ennå.`);
+  else if (price > CFG.base) setVerdict("q1verdict", "warn", "→", `Over utgangspunktet, men uten jevn stigning. Ikke bekreftet.`);
+  else if (price > CFG.weak) setVerdict("q1verdict", "serious", "↘", `Under utgangspunktet ${money(CFG.base,0)}. Tesen får ikke medhold.`);
+  else setVerdict("q1verdict", "crit", "✕", `Under ${money(CFG.weak,0)}. Tesen svekkes.`);
+  drawRuler(price, first ? first[SIG] : null);
+
+  // ---------- Spørsmål 2: mangel nå ----------
+  $("q2num").textContent = signed(m);
+  $("q2front").textContent = money(front);
+  $("q2frontcode").textContent = latest.front_code ? `kontrakt ${latest.front_code}` : "";
+  const dbE = lastWith(log, e => typeof e.dated_brent === "number");
+  const dated = dbE ? dbE.dated_brent : null;
+  $("q2dated").textContent = money(dated);
+  $("q2datedsub").textContent = dbE && dbE.dated_brent_asof ? `EIA, per ${dato(dbE.dated_brent_asof)}` : "EIA";
+  const prem = (dated !== null && front !== null) ? dated - front : null;
+  $("q2prem").textContent = signed(prem);
+  if (m === null) setVerdict("q2verdict", "na", "?", "Ingen måling.");
+  else if (m > CFG.mLive) setVerdict("q2verdict", "good", "✓", `Ja, det er trangt nå (over ${signed(CFG.mLive)}).`);
+  else if (m > 0) setVerdict("q2verdict", "warn", "→", `Litt trangt, men presset er i ferd med å slippe.`);
+  else setVerdict("q2verdict", "crit", "✕", `Nei. Ingen ekstra betalt for rask levering.`);
+
+  // ---------- Spørsmål 3: kommer oljen tilbake ----------
+  const iranE = lastWith(log, e => e.iran_loadings && typeof e.iran_loadings.value === "number");
+  const iran = iranE ? iranE.iran_loadings : null;
+  if (iran) {
+    $("q3num").textContent = iran.value.toFixed(2).replace(".", ",");
+    const age = dagerSiden(iran.date, last.ts);
+    $("q3src").textContent = `millioner fat per dag · ${iran.source || "?"}, ${iran.date ? dato(iran.date) : "?"}${alderTxt(age)}`;
+    const fresh = age === null ? "" : age > 90 ? " Tallet er gammelt (over 90 dager)." : age > 45 ? " Tallet er over 45 dager gammelt." : "";
+    if (iran.value > 1) setVerdict("q3verdict", "crit", "✕", `Over 1 mill. fat/dag. Fatene kommer tilbake. Tesen er død.${fresh}`);
+    else if (iran.value > 0.6) setVerdict("q3verdict", "warn", "→", `Eksporten tar seg opp, men er under 1 mill. fat/dag.${fresh}`);
+    else setVerdict("q3verdict", "good", "✓", `Eksporten er fortsatt lav. Fatene er ikke tilbake.${fresh}`);
+    $("q3verdict").title = `${iran.source || "?"} ${iran.date ? dato(iran.date) : ""}: ${iran.sentence || ""}`;
+  } else {
+    $("q3num").textContent = "ukjent"; $("q3src").textContent = "millioner fat per dag · ingen ferskt sitat";
+    setVerdict("q3verdict", "na", "?", "Ingen ferskt nyhetssitat med et tall. Vi vet ikke.");
+    $("q3verdict").removeAttribute("title");
+  }
+  const bdE = lastWith(log, e => typeof e.brent_dubai_monthly === "number");
+  $("q3bd").textContent = bdE ? signed(bdE.brent_dubai_monthly) : "—";
+  $("q3bdsub").textContent = bdE && bdE.brent_dubai_period ? `Verdensbanken, måned ${String(bdE.brent_dubai_period).replace("M", "-")}` : "Verdensbanken";
+  const newsRow = (key, valId, subId) => {  // last = siste logglinje (definert over)
+    const e = lastWith(log, x => x[key] && typeof x[key].value === "number");
+    if (!e) { $(valId).textContent = "ingen ferskt sitat"; $(subId).textContent = "ikke gratis i sanntid"; return; }
+    const o = e[key];
+    $(valId).textContent = signed(o.value);
+    $(subId).textContent = `${o.source || "?"}, ${o.date ? dato(o.date) : "?"}${alderTxt(dagerSiden(o.date, last.ts))}`;
+    $(valId).title = o.sentence || "";
+  };
+  newsRow("efs_news", "q3efs", "q3efssub");
+  newsRow("forties", "q3fort", "q3fortsub");
+
+  // ---------- Svaret øverst ----------
   const nearWeak = price <= CFG.weak + 2;
-  // Roll-vakt: Dec-26 sterk mens Jun-27 står stille = roll/backwardation, ikke varighet.
-  const rollWarn = (dec !== null && dec >= 90 && !sigRising)
-    ? ` Dec-26 (${fmt(dec)}) er høy, men Jun-27 følger ikke — roll-effekt/backwardation, ikke varighet.` : "";
-
-  let st;
   if (nearWeak && (m === null || m <= 0.5)) {
-    st = { c: "r", t: "TESEN SVEKKES → EXIT-sone",
-      d: `Jun-27 (${fmt(price)}) er nær $${CFG.weak.toFixed(0)} og M1–M2 mot null. Fatene kan være på vei tilbake — se fysisk sjekk.` };
-  } else if (sigFalling && !mLives) {
-    st = { c: "o", t: "REDUSER — stram stop",
-      d: `Lange enden svekkes (Jun-27 ${trendTxt}) og M1–M2 (${m===null?"N/A":signed(m)}) er under +$${CFG.mLive.toFixed(2)}.` };
+    setAnswer("crit", "✕", "Nei. Tesen svekkes, gå ut.",
+      `Jun-27 (${money(price)}) er nede ved ${money(CFG.weak,0)} og det er ikke lenger mangel nå (M1–M2 ${signed(m)}). Fatene kan være på vei tilbake.`);
+  } else if (falling && !mLives) {
+    setAnswer("serious", "↘", "Nei, og det går feil vei. Reduser.",
+      `Jun-27 faller (${trendTxt}) og mangel-tallet (${signed(m)}) er under ${signed(CFG.mLive)}. Stram stoppen.`);
   } else if (price >= CFG.confirm) {
-    st = { c: "g", t: "BEKREFTELSE STYRKES",
-      d: `Jun-27 (${fmt(price)}) over $${CFG.confirm.toFixed(0)} — lange enden løfter seg, tesen får medhold.` };
-  } else if (sigRising) {
-    st = { c: "g", t: "HOLD — tesen lever (stiger)",
-      d: `Jun-27 i vedvarende løft: ${trendTxt}. ${signed(-toConfirm)} til $${CFG.confirm.toFixed(0)}-bekreftelse.` };
+    setAnswer("good", "✓", "Ja. Markedet priser nå inn at krisen varer.",
+      `Jun-27 står i ${money(price)}, over bekreftelsesnivået ${money(CFG.confirm,0)}. Mangel nå: ${signed(m)}. Iran-eksport: ${iran ? iran.value.toFixed(2).replace(".", ",") + " mill. fat/dag" : "ukjent"}.`);
+  } else if (rising) {
+    setAnswer("good", "↗", "På vei. Jun-27 stiger jevnt, men er ikke bekreftet ennå.",
+      `${trendTxt}. Mangler ${money(CFG.confirm - price)} opp til ${money(CFG.confirm,0)}.`);
   } else if (mLives) {
-    st = { c: "y", t: "HOLD — prompt lever, lange enden flat",
-      d: `M1–M2 (${signed(m)}) holder over +$${CFG.mLive.toFixed(2)}, men Jun-27 uten vedvarende løft (${trendTxt}) — knapphet, ikke varighet, ennå.${rollWarn}` };
+    setAnswer("warn", "→", "Ikke ennå. Det er trangt nå, men markedet tror ikke det varer.",
+      `Mangel-tallet (${signed(m)}) er høyt, men Jun-27 (${money(price)}) stiger ikke jevnt (${trendTxt}).`);
   } else {
-    st = { c: "y", t: "FLAT / AVVENTER",
-      d: `Jun-27 (${fmt(price)}) sidelengs og M1–M2 ${m===null?"N/A":signed(m)} svakt. Ingen bekreftelse ennå.${rollWarn}` };
-  }
-  $("status").className = "status " + st.c;
-  $("statusDot").className = "dot " + st.c;
-  $("statusLabel").textContent = st.t;
-  $("statusDetail").textContent = st.d;
-
-  // ---- inngangstrigger (Skilling-long) ----
-  let trg, tcls;
-  if (price >= CFG.confirm) {
-    tcls = "ok"; trg = `Jun-27 over $${CFG.confirm.toFixed(0)} — sterkt trigger-tegn.`;
-  } else if (sigRising && holdsBase) {
-    tcls = "ok"; trg = `Jun-27 i vedvarende løft (${trendTxt}) og holder over $${CFG.base.toFixed(0)} — trigger-tegn til stede.`;
-  } else if (price > CFG.base && !holdsBase) {
-    tcls = "na"; trg = `Jun-27 (${fmt(price)}) har krysset $${CFG.base.toFixed(0)}, men ikke HOLDT det (forrige stengning under) — ikke aktiv.`;
-  } else if (price > CFG.base && !sigRising) {
-    tcls = "na"; trg = `Jun-27 (${fmt(price)}) er over $${CFG.base.toFixed(0)}, men uten vedvarende løft (${trendTxt}) — ikke aktiv.`;
-  } else {
-    tcls = "na"; trg = `Jun-27 (${fmt(price)}) er ikke over utgangspunktet $${CFG.base.toFixed(0)} (${trendTxt}) — ikke aktiv.`;
-  }
-  const decNote = (dec !== null && dec >= 90)
-    ? ` Dec-26 ${fmt(dec)} teller ikke som trigger (${rollTxt}).` : "";
-  $("trigger").innerHTML =
-    `<span class="pill ${tcls}">INNGANGSTRIGGER</span> &nbsp;${trg}${decNote}<br>` +
-    `<span class="note" style="display:block;margin-top:8px">Krever minst én: ` +
-    `<strong>(1)</strong> Jun-27 bryter over og HOLDER $${CFG.base.toFixed(0)}+ (vedvarende, ikke éndagssprett), eller <strong>(2)</strong> reeskalering. ` +
-    `Så: kjøp på dropp inn i <strong>$92–95</strong> på Skilling (ikke på spike), hard stop &lt;$88. ` +
-    `Pris i sonen alene er <strong>ikke</strong> nok.</span>`;
-
-  // ---- diagnoseregel (referanse hentes fra første logg-oppføring, ikke hardkodet) ----
-  const refTs = first ? first.ts.slice(0, 10) : "?";
-  $("diag").innerHTML =
-    `<strong>Diagnoseregel (EBC):</strong> varig endring når lange enden stiger samtidig som — eller mens — fronten faller. ` +
-    `Følg <strong>varighetsspreaden Front–Jun-27</strong> (${fjun!==null?signed(fjun):"N/A"} nå` +
-    `${first && num(first.front_jun)!==null ? `, ${signed(first.front_jun)} ${refTs}` : ""}), ikke frontmånedsprisen. ` +
-    `Front–Dec (${fdec!==null?signed(fdec):"N/A"}) er nå en prompt-spread. ` +
-    `Referanse ${refTs}: Jun-27 ${fmt(first[SIG])}, Dec-26 ${fmt(num(first.dec26_price))}, front ${fmt(num(first.front_price))}, ` +
-    `M1–M2 ${signed(num(first.m1_m2))}` +
-    `${num(first.dated_brent)!==null ? `, Dated Brent ${fmt(first.dated_brent)}` : ""}.`;
-
-  // ---- Skilling flat price (live, fra cTrader-feed) ----
-  const skEntry = [...log].reverse().find(e => typeof e.skilling_brent === "number");
-  const sk = skEntry ? skEntry.skilling_brent : null;
-  if (sk === null) {
-    $("skillingVal").textContent = "N/A";
-    $("skillingVal").className = "v";
-    $("skillingZone").textContent = "ingen Skilling-pris logget ennå (cTrader-feed)";
-  } else {
-    let z, zc;
-    if (sk < 88)        { z = "Under hard stop $88 — flat-price bekrefter ikke setupet"; zc = "down"; }
-    else if (sk < 92)   { z = "Mellom hard stop $88 og inngangssone $92"; zc = "flat"; }
-    else if (sk <= 95)  { z = "I inngangssonen $92–95 — kjøp krever trigger + dropp"; zc = "up"; }
-    else if (sk < 104)  { z = "Over inngangssonen — vent på fredsoverskrift-dropp inn i $92–95"; zc = "flat"; }
-    else if (sk < 115)  { z = "Ved/over første mål $104–108 — vurder å ta 50%"; zc = "up"; }
-    else                { z = "I strukket mål $115–120+"; zc = "up"; }
-    $("skillingVal").textContent = fmt(sk);
-    $("skillingVal").className = "v " + zc;
-    const asof = skEntry.skilling_asof ? ` · siste D1-close per ${String(skEntry.skilling_asof).slice(0,10)}` : "";
-    $("skillingZone").textContent = z + asof;
+    setAnswer("warn", "→", "Ingen signal. Avvent.",
+      `Jun-27 (${money(price)}) går sidelengs og mangel-tallet (${signed(m)}) er svakt.`);
   }
 
-  // ---- Dated Brent (EIA-proxy) i fysisk-panelet ----
-  const dbEntry = [...log].reverse().find(e => typeof e.dated_brent === "number");
-  const dbv = dbEntry ? dbEntry.dated_brent : null;
-  const fp = num(latest.front_price);
-  if (dbv === null) {
-    $("datedWatch").textContent = "—";
-    $("datedWatch").className = "pill na";
-  } else {
-    const prem = (fp !== null) ? +(dbv - fp).toFixed(2) : null;
-    let pc = "na";
-    if (prem !== null) pc = prem >= 3 ? "ok" : prem > 0 ? "warn" : "dead";
-    const asof = dbEntry.dated_brent_asof ? ` (${String(dbEntry.dated_brent_asof).slice(0,10)})` : "";
-    const premTxt = prem !== null ? ` · ${signed(prem)} vs front` : "";
-    $("datedWatch").textContent = fmt(dbv) + asof + premTxt;
-    $("datedWatch").className = "pill " + pc;
-  }
+  // ---------- Skilling ----------
+  const skE = lastWith(log, e => typeof e.skilling_brent === "number");
+  const sk = skE ? skE.skilling_brent : null;
+  $("sknum").textContent = money(sk);
+  $("skasof").textContent = skE && skE.skilling_asof ? `siste dagsslutt ${dato(skE.skilling_asof)} · «Oil Brent» på Skilling` : "";
+  let zone = null;
+  if (sk !== null) {
+    if (sk < 88) { zone = "stop"; setVerdict("skzone", "crit", "✕", "Under hard stopp. Ingen posisjon."); }
+    else if (sk < 92) { zone = "gap"; setVerdict("skzone", "warn", "→", "Mellom stopp og kjøpssone. Ingenting å gjøre."); }
+    else if (sk <= 95) { zone = "buy"; setVerdict("skzone", "good", "●", "I kjøpssonen. Kjøp bare hvis signalet under er grønt, og på et dropp."); }
+    else if (sk < 104) { zone = "over"; setVerdict("skzone", "warn", "↑", "Over kjøpssonen. Vent på et fall inn i $92–95."); }
+    else if (sk < 115) { zone = "t1"; setVerdict("skzone", "good", "◎", "Ved første mål. Har du posisjon: selg halve."); }
+    else { zone = "t2"; setVerdict("skzone", "good", "◎", "I strukket mål."); }
+  } else setVerdict("skzone", "na", "?", "Ingen Skilling-pris logget.");
+  document.querySelectorAll("#ladder tr").forEach(tr => tr.classList.toggle("here", tr.dataset.z === zone));
 
-  // ---- nyhets-siterte fysiske assessments (Iran / Forties / EFS) ----
-  const lastWith = (pred) => [...log].reverse().find(pred);
-  const ageColor = (a) => (a === null || a === undefined) ? "na"
-    : a <= 45 ? "ok" : a <= 90 ? "warn" : "na";
-  function setNewsPill(id, obj, valFmt) {
-    const el = $(id);
-    if (!obj || typeof obj.value !== "number") {
-      el.textContent = "ingen ferskt sitat"; el.className = "pill na"; el.removeAttribute("title"); return;
-    }
-    const date = obj.date ? String(obj.date).slice(0, 10) : "?";
-    const unit = obj.unit === "$/bbl" ? "$/fat" : (obj.unit || "");
-    el.textContent = `${valFmt(obj.value)} ${unit} · ${obj.source || "?"} ${date}`;
-    el.className = "pill " + ageColor(obj.age_days);
-    if (obj.sentence) el.title = obj.sentence; else el.removeAttribute("title");
-  }
-  const getNews = (k) => (lastWith(e => e[k] && typeof e[k].value === "number") || {})[k];
-  setNewsPill("iranWatch", getNews("iran_loadings"), v => Number(v).toFixed(2));
-  setNewsPill("fortiesWatch", getNews("forties"), v => signed(v));
-  setNewsPill("efsWatch", getNews("efs_news"), v => signed(v));
-
-  // ---- Brent-Dubai månedlig (World Bank) ----
-  const bdmEntry = lastWith(e => typeof e.brent_dubai_monthly === "number");
-  if (bdmEntry) {
-    $("bdWatch").textContent = `${signed(bdmEntry.brent_dubai_monthly)} $ · WB ${bdmEntry.brent_dubai_period || ""}`;
-    $("bdWatch").className = "pill na";
-  } else {
-    $("bdWatch").textContent = "—"; $("bdWatch").className = "pill na";
-  }
+  let trigOk = false, trigTxt;
+  if (price >= CFG.confirm) { trigOk = true; trigTxt = `Signal: JA. Jun-27 er over ${money(CFG.confirm,0)}.`; }
+  else if (rising && holdsBase) { trigOk = true; trigTxt = `Signal: JA. Jun-27 stiger jevnt og holder seg over ${money(CFG.base,0)}.`; }
+  else if (price > CFG.base) { trigTxt = `Signal: NEI. Jun-27 er over ${money(CFG.base,0)}, men ${!holdsBase ? "har ikke holdt det to dager på rad" : "stiger ikke jevnt"}.`; }
+  else { trigTxt = `Signal: NEI. Jun-27 (${money(price)}) er ikke over utgangspunktet ${money(CFG.base,0)}.`; }
+  setVerdict("trigger", trigOk ? "good" : "na", trigOk ? "✓" : "✕", trigTxt);
+  $("triggerwhy").textContent = trigOk
+    ? "Kjøpssignalet er på. Det betyr ikke kjøp nå: vent på at Skilling-prisen faller inn i $92–95 etter en fredsoverskrift. Hard stopp under $88."
+    : "Uten signal fra spørsmål 1 kjøper du ikke, selv om prisen er i kjøpssonen. Unntak: krisen eskalerer tydelig (tankskip angrepet, miner, avtale ryker).";
 
   drawChart(valids);
+  drawTable(log);
 }
 
-function drawChart(valids) {
-  const W = 960, H = 360, padL = 52, padR = 16, padT = 16, padB = 40;
-  const iw = W - padL - padR, ih = H - padT - padB;
-  if (valids.length === 0) { $("chart").innerHTML = ""; return; }
-
-  const junV = valids.map(e => e[SIG]);
-  const decV = valids.map(e => num(e.dec26_price));
-  const frontV = valids.map(e => num(e.front_price));
-  const allY = junV
-    .concat(decV.filter(v => v !== null))
-    .concat(frontV.filter(v => v !== null))
-    .concat([CFG.base, CFG.confirm, CFG.weak]);
-  let ymin = Math.min(...allY), ymax = Math.max(...allY);
-  const padY = Math.max((ymax - ymin) * 0.08, 1);
-  ymin -= padY; ymax += padY;
-
-  const n = valids.length;
-  const x = (i) => padL + (n === 1 ? iw / 2 : (i / (n - 1)) * iw);
-  const y = (v) => padT + ih - ((v - ymin) / (ymax - ymin)) * ih;
-
-  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg">`;
-  const ticks = 5;
-  for (let t = 0; t <= ticks; t++) {
-    const val = ymin + (t / ticks) * (ymax - ymin), yy = y(val);
-    s += `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="#262b36" stroke-width="1"/>`;
-    s += `<text x="${padL - 8}" y="${yy + 4}" fill="#8b93a4" font-size="11" text-anchor="end">$${val.toFixed(1)}</text>`;
-  }
-  const hline = (val, color, label) => {
-    if (val < ymin || val > ymax) return "";
-    const yy = y(val);
-    return `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="${color}" stroke-width="1.5" stroke-dasharray="5 4"/>` +
-      `<text x="${W - padR}" y="${yy - 5}" fill="${color}" font-size="11" text-anchor="end">${label} $${val.toFixed(0)}</text>`;
-  };
-  s += hline(CFG.weak, "#e74c3c", "svekkelse");
-  s += hline(CFG.base, "#f1c40f", "utg.pkt");
-  s += hline(CFG.confirm, "#2ecc71", "bekreftelse");
-
-  const linePath = (vals, color, width, opacity) => {
-    let d = "", started = false, out = "";
-    vals.forEach((v, i) => {
-      if (v === null) { started = false; return; }
-      d += (started ? " L" : " M") + `${x(i).toFixed(1)} ${y(v).toFixed(1)}`;
-      started = true;
-    });
-    if (d) out += `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}" opacity="${opacity}"/>`;
-    return out;
-  };
-  s += linePath(frontV, "#6b7280", 1.5, 0.6);
-  s += linePath(decV, "#4aa3ff", 1.8, 0.75);
-  s += linePath(junV, "#b07cff", 2.5, 1);
-
-  junV.forEach((v, i) => { s += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3" fill="#b07cff"/>`; });
-  const li = n - 1;
-  s += `<circle cx="${x(li).toFixed(1)}" cy="${y(junV[li]).toFixed(1)}" r="5" fill="#b07cff" stroke="#0f1115" stroke-width="2"/>`;
-  s += `<text x="${x(li).toFixed(1)}" y="${(y(junV[li]) - 12).toFixed(1)}" fill="#e6e9ef" font-size="12" font-weight="700" text-anchor="middle">$${junV[li].toFixed(2)}</text>`;
-
-  const labelIdx = n <= 6 ? valids.map((_, i) => i) : [0, Math.floor(n/3), Math.floor(2*n/3), n-1];
-  labelIdx.forEach(i => {
-    const ts = valids[i].ts || "";
-    const short = ts.length >= 16 ? ts.slice(5,16).replace("T"," ") : ts;
-    s += `<text x="${x(i).toFixed(1)}" y="${H - 14}" fill="#8b93a4" font-size="10" text-anchor="middle">${short}</text>`;
+// ---------- Skala for Jun-27 ----------
+function drawRuler(price, firstPrice) {
+  const lo = Math.min(CFG.weak - 4, price - 2), hi = Math.max(CFG.confirm + 8, price + 2);
+  const W = 400, x = v => 16 + (v - lo) / (hi - lo) * (W - 32);
+  const cs = getComputedStyle(document.documentElement);
+  const c = n => cs.getPropertyValue(n).trim();
+  let s = `<line x1="16" y1="30" x2="${W-16}" y2="30" stroke="${c('--axis')}" stroke-width="2" stroke-linecap="round"/>`;
+  s += `<line x1="${x(CFG.weak)}" y1="30" x2="${x(CFG.confirm)}" y2="30" stroke="${c('--grid')}" stroke-width="2"/>`;
+  s += `<line x1="${x(CFG.confirm)}" y1="30" x2="${W-16}" y2="30" stroke="${c('--good')}" stroke-width="2" opacity=".5"/>`;
+  s += `<line x1="16" y1="30" x2="${x(CFG.weak)}" y2="30" stroke="${c('--crit')}" stroke-width="2" opacity=".5"/>`;
+  [[CFG.weak, "svekkes"], [CFG.base, "utg.pkt"], [CFG.confirm, "bekreftet"]].forEach(([v, l]) => {
+    s += `<line x1="${x(v)}" y1="22" x2="${x(v)}" y2="38" stroke="${c('--muted')}" stroke-width="1.5"/>`;
+    s += `<text x="${x(v)}" y="54" font-size="11" fill="${c('--muted')}" text-anchor="middle">${l} $${v}</text>`;
   });
+  if (firstPrice !== null) s += `<circle cx="${x(firstPrice)}" cy="30" r="4" fill="${c('--surface')}" stroke="${c('--muted')}" stroke-width="1.5"/>`;
+  s += `<circle cx="${x(price)}" cy="30" r="7" fill="${c('--s1')}" stroke="${c('--surface')}" stroke-width="2"/>`;
+  s += `<text x="${x(price)}" y="12" font-size="12" font-weight="700" fill="${c('--ink')}" text-anchor="middle">nå $${price.toFixed(2)}</text>`;
+  $("ruler").innerHTML = s;
+}
+
+// ---------- Graf ----------
+let CH = null;
+function drawChart(valids) {
+  const W = 960, H = 340, pl = 54, pr = 20, pt = 22, pb = 36, iw = W - pl - pr, ih = H - pt - pb;
+  const cs = getComputedStyle(document.documentElement);
+  const c = n => cs.getPropertyValue(n).trim();
+  const pts = valids.map(e => ({ t: new Date(e.ts).getTime(), jun: e[SIG], front: num(e.front_price), e }));
+  const t0 = pts[0].t, t1 = pts.length > 1 ? pts[pts.length - 1].t : t0 + 86400000;
+  const ys = pts.map(p => p.jun).concat(pts.map(p => p.front).filter(v => v !== null), [CFG.weak, CFG.base, CFG.confirm]);
+  let ymin = Math.floor(Math.min(...ys) / 5) * 5 - 2, ymax = Math.ceil(Math.max(...ys) / 5) * 5 + 2;
+  const x = t => pl + (t - t0) / (t1 - t0) * iw;
+  const y = v => pt + ih - (v - ymin) / (ymax - ymin) * ih;
+
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jun-27 og fronten over tid">`;
+  const step = (ymax - ymin) > 40 ? 10 : 5;
+  for (let v = Math.ceil(ymin / step) * step; v <= ymax; v += step) {
+    s += `<line x1="${pl}" y1="${y(v)}" x2="${W - pr}" y2="${y(v)}" stroke="${c('--grid')}" stroke-width="1"/>`;
+    s += `<text x="${pl - 8}" y="${y(v) + 4}" font-size="11" fill="${c('--muted')}" text-anchor="end">$${v}</text>`;
+  }
+  const halo = `paint-order="stroke" stroke="${c('--surface')}" stroke-width="3" stroke-linejoin="round"`;
+  const thr = (v, label) => `<line x1="${pl}" y1="${y(v)}" x2="${W - pr}" y2="${y(v)}" stroke="${c('--muted')}" stroke-width="1" stroke-dasharray="4 4"/>` +
+    `<text x="${W - pr}" y="${y(v) - 4}" font-size="11" fill="${c('--muted')}" text-anchor="end" ${halo}>${label} $${v}</text>`;
+  s += thr(CFG.weak, "svekkes") + thr(CFG.base, "utgangspunkt") + thr(CFG.confirm, "bekreftet");
+  // Måneds-merker på x-aksen
+  const d0 = new Date(t0); let mk = new Date(d0.getFullYear(), d0.getMonth() + 1, 1);
+  while (mk.getTime() < t1) {
+    s += `<line x1="${x(mk)}" y1="${pt + ih}" x2="${x(mk)}" y2="${pt + ih + 5}" stroke="${c('--axis')}"/>`;
+    s += `<text x="${x(mk)}" y="${H - 8}" font-size="11" fill="${c('--muted')}" text-anchor="middle">1. ${MND[mk.getMonth()]}</text>`;
+    mk = new Date(mk.getFullYear(), mk.getMonth() + 1, 1);
+  }
+  s += `<line x1="${pl}" y1="${pt + ih}" x2="${W - pr}" y2="${pt + ih}" stroke="${c('--axis')}" stroke-width="1"/>`;
+  // Linjer: brudd der det er mer enn 5 dager mellom målinger
+  const path = (key, color, width, op) => {
+    let d = "", prevT = null;
+    pts.forEach(p => {
+      const v = p[key]; if (v === null) { prevT = null; return; }
+      const gap = prevT !== null && (p.t - prevT) > 5 * 86400000;
+      d += (prevT === null || gap ? " M" : " L") + `${x(p.t).toFixed(1)} ${y(v).toFixed(1)}`;
+      prevT = p.t;
+    });
+    return d ? `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}" opacity="${op}" stroke-linejoin="round" stroke-linecap="round"/>` : "";
+  };
+  s += path("front", c('--front'), 2, 0.7);
+  s += path("jun", c('--s1'), 2, 1);
+  const lp = pts[pts.length - 1];
+  s += `<circle cx="${x(lp.t)}" cy="${y(lp.jun)}" r="5" fill="${c('--s1')}" stroke="${c('--surface')}" stroke-width="2"/>`;
+  s += `<text x="${x(lp.t) - 8}" y="${y(lp.jun) - 10}" font-size="12" font-weight="700" fill="${c('--ink')}" text-anchor="end" ${halo}>$${lp.jun.toFixed(2).replace(".", ",")}</text>`;
+  if (lp.front !== null) s += `<circle cx="${x(lp.t)}" cy="${y(lp.front)}" r="4" fill="${c('--front')}" stroke="${c('--surface')}" stroke-width="2"/>`;
+  s += `<line id="xhair" x1="0" y1="${pt}" x2="0" y2="${pt + ih}" stroke="${c('--ink2')}" stroke-width="1" style="display:none"/>`;
+  s += `<circle id="xdot" r="5" fill="${c('--s1')}" stroke="${c('--surface')}" stroke-width="2" style="display:none"/>`;
+  s += `<rect id="hit" x="${pl}" y="${pt}" width="${iw}" height="${ih}" fill="transparent"/>`;
   s += `</svg>`;
   $("chart").innerHTML = s;
+  CH = { pts, x, y, W, pl, iw };
 }
 
-["confirmInput","baseInput","weakInput","mInput"].forEach(id => $(id).addEventListener("input", render));
+function hover(ev) {
+  if (!CH) return;
+  const svg = $("chart").querySelector("svg"), tip = $("tip");
+  const r = svg.getBoundingClientRect();
+  const sx = (ev.clientX - r.left) / r.width * CH.W;
+  let best = 0, bd = Infinity;
+  CH.pts.forEach((p, i) => { const d = Math.abs(CH.x(p.t) - sx); if (d < bd) { bd = d; best = i; } });
+  const p = CH.pts[best], e = p.e;
+  const xh = svg.querySelector("#xhair"), xd = svg.querySelector("#xdot");
+  xh.setAttribute("x1", CH.x(p.t)); xh.setAttribute("x2", CH.x(p.t)); xh.style.display = "";
+  xd.setAttribute("cx", CH.x(p.t)); xd.setAttribute("cy", CH.y(p.jun)); xd.style.display = "";
+  tip.textContent = "";
+  const d = document.createElement("div"); d.className = "d"; d.textContent = dato(e.ts); tip.appendChild(d);
+  const cs = getComputedStyle(document.documentElement);
+  const row = (label, val, color) => {
+    const rw = document.createElement("div"); rw.className = "row";
+    const l = document.createElement("span");
+    if (color) { const k = document.createElement("span"); k.className = "key"; k.style.background = cs.getPropertyValue(color); l.appendChild(k); }
+    l.appendChild(document.createTextNode(label));
+    const b = document.createElement("b"); b.textContent = val;
+    rw.appendChild(l); rw.appendChild(b); tip.appendChild(rw);
+  };
+  row("Jun-27", money(p.jun), "--s1");
+  row("Oljepris nå", money(p.front), "--front");
+  row("Mangel nå (M1–M2)", signed(num(e.m1_m2)));
+  row("Skilling", money(num(e.skilling_brent)));
+  const px = (CH.x(p.t) / CH.W) * r.width;
+  tip.style.display = "block";
+  const left = px + 16 + tip.offsetWidth > r.width ? px - tip.offsetWidth - 12 : px + 16;
+  const box = $("chart");  // <svg> har ikke offsetTop, bruk div-en rundt
+  tip.style.left = (box.offsetLeft + left) + "px";
+  tip.style.top = (box.offsetTop + 10) + "px";
+}
+function unhover() {
+  const svg = $("chart").querySelector("svg"); if (!svg) return;
+  svg.querySelector("#xhair").style.display = "none"; svg.querySelector("#xdot").style.display = "none";
+  $("tip").style.display = "none";
+}
+$("chart").addEventListener("pointermove", hover);
+$("chart").addEventListener("pointerleave", unhover);
+
+function drawTable(log) {
+  const t = $("datatable"); t.textContent = "";
+  const hdr = ["Dato", "Jun-27", "Oljepris nå", "Kontrakt", "Mangel nå (M1–M2)", "Skilling", "Dated Brent"];
+  const tr = document.createElement("tr");
+  hdr.forEach(h => { const th = document.createElement("th"); th.textContent = h; tr.appendChild(th); });
+  t.appendChild(tr);
+  [...log].reverse().forEach(e => {
+    const r = document.createElement("tr");
+    const cells = e.market_closed
+      ? [dato(e.ts), "marked stengt", "", "", "", "", ""]
+      : [dato(e.ts), money(num(e[SIG])), money(num(e.front_price)), e.front_code || "", signed(num(e.m1_m2)),
+         money(num(e.skilling_brent)), money(num(e.dated_brent))];
+    cells.forEach(v => { const td = document.createElement("td"); td.textContent = v; r.appendChild(td); });
+    t.appendChild(r);
+  });
+}
+
+["confirmInput", "baseInput", "weakInput", "mInput"].forEach(id => $(id).addEventListener("input", render));
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
 render();
 </script>
 </body>
