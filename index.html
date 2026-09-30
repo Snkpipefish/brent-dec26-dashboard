@@ -162,6 +162,7 @@
         <div class="unit">dollar per fat · kontrakten «Jun-27»</div>
         <div class="verdict" id="q1verdict">—</div>
         <div class="small" id="q1trend"></div>
+        <div class="small" id="q1rel"></div>
         <svg class="ruler" id="ruler" viewBox="0 0 400 64" aria-label="Skala for Jun-27-prisen"></svg>
       </div>
       <div class="explain">
@@ -173,6 +174,10 @@
         <p><strong>Nivåene:</strong> under <b id="thrWeak">$76</b> = tesen svekkes ·
            <b id="thrBase">$80</b> = utgangspunktet fra 1. juni ·
            over <b id="thrConf">$84</b> = markedet bekrefter tesen.</p>
+        <p><strong>Men ett krav til:</strong> Jun-27 må ha steget <em>mer enn dagens oljepris</em>. Løfter hele kurven
+           seg likt, er olje bare blitt dyrere i dag, ikke «lenger». Derfor krever vi at avstanden mellom dagens pris og
+           Jun-27 har krympet minst <b id="thrTight">$2</b> siden 1. juni. Avstanden justeres for det mekaniske hoppet
+           hver gang fronten bytter kontrakt.</p>
       </div>
     </div>
 
@@ -232,8 +237,10 @@
       <label>Utgangspunkt <input type="number" id="baseInput" value="80" step="0.5"></label>
       <label>Bekreftelse <input type="number" id="confirmInput" value="84" step="0.5"></label>
       <label>Mangel nå over <input type="number" id="mInput" value="1.5" step="0.25"></label>
+      <label>Jun-27 tatt igjen minst <input type="number" id="tightenInput" value="2" step="0.5"></label>
     </div>
-    <p class="small">Utgangspunktet er Jun-27-prisen 1. juni 2026. Pluss/minus fire dollar er et forslag, ikke fra notatet.</p>
+    <p class="small">Utgangspunktet er Jun-27-prisen 1. juni 2026. Pluss/minus fire dollar er et forslag, ikke fra notatet.
+       «Tatt igjen»-kravet er notatets egen regel (lange enden skal stige <em>relativt til</em> fronten); de to dollarene er et forslag.</p>
   </details>
 
   <h2><span class="n">2</span>Hva gjør du på Skilling?</h2>
@@ -287,7 +294,8 @@
       <dt>Terminkontrakt</dt><dd>En avtale om å kjøpe olje til en fast pris på et bestemt tidspunkt fremover. Det finnes én kontrakt per måned, flere år frem. Prisene på disse er «kurven».</dd>
       <dt>Fremste kontrakt («front»)</dt><dd>Kontrakten som leverer først, altså neste måned. Det er den prisen avisene mener når de sier «oljeprisen». Den skifter navn hver måned (CBX26 = november 2026, CBZ26 = desember 2026).</dd>
       <dt>Jun-27 (CBM27)</dt><dd>Kontrakten som leverer i juni 2027. Vårt hovedtall. Ligger langt nok frem til at dagens støy ikke slår inn, men nær nok til at markedet faktisk handler den.</dd>
-      <dt>Dec-26 (CBZ26)</dt><dd>Kontrakten for desember 2026. Fram til september var dette hovedtallet. Nå er den så nær at den 1. oktober selv blir «fronten», så den sier ikke lenger noe om lang sikt. Derfor byttet vi til Jun-27.</dd>
+      <dt>Dec-26 (CBZ26)</dt><dd>Kontrakten for desember 2026. Fram til september var dette hovedtallet. Fra 1. oktober 2026 er den selve «fronten», så den sier ikke lenger noe om lang sikt. Derfor byttet vi til Jun-27.</dd>
+      <dt>Dec-27 (CBZ27)</dt><dd>Kontrakten for desember 2027. Logges fra 1. oktober 2026 for å ha historikk klar når Jun-27 selv kommer for nær fronten (våren 2027) og må byttes ut.</dd>
       <dt>M1–M2</dt><dd>Prisen på fremste kontrakt minus prisen på den neste. Positivt tall = folk betaler ekstra for olje raskt = mangel nå. Kalles også backwardation når positivt, contango når negativt.</dd>
       <dt>Dated Brent</dt><dd>Prisen på fysiske fat som skal lastes de nærmeste ukene. Papir-markedet (terminkontrakter) kan falle på en overskrift, mens fysiske fat fortsatt er dyre. Vi bruker et gratis tall fra amerikanske EIA, som ligger noen dager etter.</dd>
       <dt>Flat price / Oil Brent på Skilling</dt><dd>Vanlig oljepris som CFD. Følger omtrent fronten. Koster finansiering hver natt, så det er en tidsbegrenset trade.</dd>
@@ -298,7 +306,7 @@
     </dl>
   </div>
 
-  <p class="foot">Analyse, ikke investeringsråd. Tallene hentes én gang per handledag (17:30 norsk tid) fra Barchart, kryssjekket mot oilprice.
+  <p class="foot">Analyse, ikke investeringsråd. Tallene hentes én gang per handledag, ca. 20:45 norsk tid, etter at ICE har satt dagens sluttkurs (20:30), fra Barchart, kryssjekket mot oilprice.
      Ingen tall gjettes: feiler en henting, vises forrige verdi med merknad. Hele resonnementet står i
      <a href="tese.html">analysenotatet og trade-planen</a>. Den gamle, tettere siden finnes fortsatt som
      <a href="dec26_dashboard_gammel.html">gammel visning</a>.</p>
@@ -308,7 +316,8 @@
 <script>
 "use strict";
 const SIG = "jun27_price";
-const CFG = { confirm: 84, base: 80, weak: 76, mLive: 1.5 };
+const CFG = { confirm: 84, base: 80, weak: 76, mLive: 1.5, tighten: 2 };
+const NEWS_MAX_AGE = 45;  // dager; må matche MAX_AGE_DAYS i news_assessments.py
 const $ = (id) => document.getElementById(id);
 const num = (v) => (typeof v === "number" && !Number.isNaN(v)) ? v : null;
 const money = (v, d = 2) => v === null ? "—" : "$" + v.toFixed(d).replace(".", ",");
@@ -339,6 +348,8 @@ function render() {
   CFG.base = parseFloat($("baseInput").value);
   CFG.weak = parseFloat($("weakInput").value);
   CFG.mLive = parseFloat($("mInput").value);
+  CFG.tighten = parseFloat($("tightenInput").value);
+  $("thrTight").textContent = money(CFG.tighten, 0);
   $("thrWeak").textContent = money(CFG.weak, 0); $("thrBase").textContent = money(CFG.base, 0);
   $("thrConf").textContent = money(CFG.confirm, 0); $("thrM").textContent = signed(CFG.mLive);
 
@@ -366,7 +377,28 @@ function render() {
     n.textContent = `Siste henting (${dato(last.ts)}) ga ingen Jun-27-pris (${last.jun27_error || last.dec26_error || "ukjent årsak"}). Viser tall fra ${latest ? dato(latest.ts) : "—"}.`;
     $("notices").appendChild(n);
   }
+  if (last.suspect_stale) {
+    const n = document.createElement("div"); n.className = "notice";
+    n.textContent = `Siste henting (${dato(last.ts)}) ga nøyaktig samme priser som dagen før. Trolig var markedet stengt, så tallet er forrige sluttkurs.`;
+    $("notices").appendChild(n);
+  }
   if (!latest) { setAnswer("warn", "?", "Ingen gyldig Jun-27-pris logget ennå", ""); return; }
+
+  // Roll-justert avstand front→Jun-27. Når fronten bytter kontrakt faller
+  // avstanden mekanisk med M1–M2 (backwardation) uten at noe er repriset.
+  // Vi legger derfor forrige dags M1–M2 tilbake på byttedagen. (Dekker ett
+  // bytte per hull i loggen; to bytter i samme hull justeres bare for ett.)
+  const relMap = new Map(); let relAdj = null, relPrev = null;
+  valids.forEach(e => {
+    const fj = num(e.front_jun); if (fj === null) return;
+    if (relAdj === null) relAdj = fj;
+    else {
+      let d = fj - num(relPrev.front_jun);
+      if (e.front_code !== relPrev.front_code && num(relPrev.m1_m2) !== null) d += relPrev.m1_m2;
+      relAdj += d;
+    }
+    relMap.set(e, relAdj); relPrev = e;
+  });
 
   // ---------- Spørsmål 1: Jun-27 ----------
   const price = latest[SIG];
@@ -385,12 +417,21 @@ function render() {
     : `${signed(dPrev)} siden forrige måling`;
   const holdsBase = valids.length >= 2 && price > CFG.base && prev[SIG] > CFG.base;
   const mLives = m !== null && m > CFG.mLive;
+  const spreadFirst = first ? num(first.front_jun) : null;
+  const spreadNow = relMap.has(latest) ? relMap.get(latest) : null;
+  const rel = (spreadFirst !== null && spreadNow !== null) ? spreadFirst - spreadNow : null;  // + = Jun-27 tok igjen fronten
+  const relOk = rel !== null && rel >= CFG.tighten;
+  const relTxt = rel === null ? "ukjent" : `${signed(rel)}`;
 
   $("q1num").textContent = money(price);
   $("q1first").textContent = first ? money(first[SIG]) + " (" + dato(first.ts) + ")" : "—";
   $("q1trend").textContent = `Siden forrige måling: ${signed(dPrev)} · trend: ${trendTxt}` +
     (first ? ` · siden 1. juni: ${signed(price - first[SIG])}` : "");
-  if (price >= CFG.confirm) setVerdict("q1verdict", "good", "✓", `Over ${money(CFG.confirm,0)}. Markedet bekrefter at krisen varer.`);
+  $("q1rel").textContent = rel === null
+    ? "Avstand til dagens pris: ukjent (mangler front-pris)."
+    : `Avstand dagens pris → Jun-27: ${money(spreadFirst)} 1. juni, ${money(spreadNow)} nå (roll-justert). Jun-27 har ${rel >= 0 ? "tatt igjen" : "tapt mot"} fronten med ${money(Math.abs(rel))}${relOk ? "" : ", krav: minst " + money(CFG.tighten, 0)}.`;
+  if (price >= CFG.confirm && relOk) setVerdict("q1verdict", "good", "✓", `Over ${money(CFG.confirm,0)}, og Jun-27 har tatt igjen fronten (${relTxt}). Markedet bekrefter at krisen varer.`);
+  else if (price >= CFG.confirm) setVerdict("q1verdict", "warn", "→", `Over ${money(CFG.confirm,0)}, men dagens pris har steget like mye (Jun-27 mot front: ${relTxt}). Hele kurven løftet seg. Det er dyrere olje, ikke lengre krise.`);
   else if (price > CFG.base && rising) setVerdict("q1verdict", "good", "↗", `Stiger jevnt, men ikke over ${money(CFG.confirm,0)} ennå.`);
   else if (price > CFG.base) setVerdict("q1verdict", "warn", "→", `Over utgangspunktet, men uten jevn stigning. Ikke bekreftet.`);
   else if (price > CFG.weak) setVerdict("q1verdict", "serious", "↘", `Under utgangspunktet ${money(CFG.base,0)}. Tesen får ikke medhold.`);
@@ -414,7 +455,9 @@ function render() {
 
   // ---------- Spørsmål 3: kommer oljen tilbake ----------
   const iranE = lastWith(log, e => e.iran_loadings && typeof e.iran_loadings.value === "number");
-  const iran = iranE ? iranE.iran_loadings : null;
+  const iranOld = iranE ? iranE.iran_loadings : null;   // siste kjente, uansett alder
+  const iranAge = iranOld ? dagerSiden(iranOld.date, last.ts) : null;
+  const iran = (iranOld && iranAge !== null && iranAge <= NEWS_MAX_AGE) ? iranOld : null;
   if (iran) {
     $("q3num").textContent = iran.value.toFixed(2).replace(".", ",");
     const age = dagerSiden(iran.date, last.ts);
@@ -425,8 +468,11 @@ function render() {
     else setVerdict("q3verdict", "good", "✓", `Eksporten er fortsatt lav. Fatene er ikke tilbake.${fresh}`);
     $("q3verdict").title = `${iran.source || "?"} ${iran.date ? dato(iran.date) : ""}: ${iran.sentence || ""}`;
   } else {
-    $("q3num").textContent = "ukjent"; $("q3src").textContent = "millioner fat per dag · ingen ferskt sitat";
-    setVerdict("q3verdict", "na", "?", "Ingen ferskt nyhetssitat med et tall. Vi vet ikke.");
+    $("q3num").textContent = "ukjent";
+    $("q3src").textContent = iranOld
+      ? `millioner fat per dag · siste kjente ${iranOld.value.toFixed(2).replace(".", ",")} (${iranOld.source || "?"}, ${dato(iranOld.date)}) er ${iranAge} dager gammelt, for gammelt til å brukes`
+      : "millioner fat per dag · ingen ferskt sitat";
+    setVerdict("q3verdict", "na", "?", `Ingen nyhetssitat med et tall nyere enn ${NEWS_MAX_AGE} dager. Vi vet ikke.`);
     $("q3verdict").removeAttribute("title");
   }
   const bdE = lastWith(log, e => typeof e.brent_dubai_monthly === "number");
@@ -436,6 +482,12 @@ function render() {
     const e = lastWith(log, x => x[key] && typeof x[key].value === "number");
     if (!e) { $(valId).textContent = "ingen ferskt sitat"; $(subId).textContent = "ikke gratis i sanntid"; return; }
     const o = e[key];
+    const age = dagerSiden(o.date, last.ts);
+    if (age !== null && age > NEWS_MAX_AGE) {
+      $(valId).textContent = "ingen ferskt sitat";
+      $(subId).textContent = `siste kjente ${signed(o.value)} (${o.source || "?"}, ${dato(o.date)}) er ${age} dager gammelt`;
+      $(valId).removeAttribute("title"); return;
+    }
     $(valId).textContent = signed(o.value);
     $(subId).textContent = `${o.source || "?"}, ${o.date ? dato(o.date) : "?"}${alderTxt(dagerSiden(o.date, last.ts))}`;
     $(valId).title = o.sentence || "";
@@ -451,9 +503,12 @@ function render() {
   } else if (falling && !mLives) {
     setAnswer("serious", "↘", "Nei, og det går feil vei. Reduser.",
       `Jun-27 faller (${trendTxt}) og mangel-tallet (${signed(m)}) er under ${signed(CFG.mLive)}. Stram stoppen.`);
-  } else if (price >= CFG.confirm) {
+  } else if (price >= CFG.confirm && relOk) {
     setAnswer("good", "✓", "Ja. Markedet priser nå inn at krisen varer.",
-      `Jun-27 står i ${money(price)}, over bekreftelsesnivået ${money(CFG.confirm,0)}. Mangel nå: ${signed(m)}. Iran-eksport: ${iran ? iran.value.toFixed(2).replace(".", ",") + " mill. fat/dag" : "ukjent"}.`);
+      `Jun-27 står i ${money(price)}, over bekreftelsesnivået ${money(CFG.confirm,0)}, og har tatt igjen dagens pris med ${relTxt} siden 1. juni. Mangel nå: ${signed(m)}. Iran-eksport: ${iran ? iran.value.toFixed(2).replace(".", ",") + " mill. fat/dag" : "ukjent"}.`);
+  } else if (price >= CFG.confirm) {
+    setAnswer("warn", "→", "Ikke ennå. Olje er dyrere, men markedet tror ikke det varer lenger.",
+      `Jun-27 (${money(price)}) er over ${money(CFG.confirm,0)}, men dagens pris har steget like mye: avstanden er ${money(spreadNow)} mot ${money(spreadFirst)} 1. juni. Hele kurven løftet seg likt. Notatets regel: den lange enden må stige mer enn fronten.`);
   } else if (rising) {
     setAnswer("good", "↗", "På vei. Jun-27 stiger jevnt, men er ikke bekreftet ennå.",
       `${trendTxt}. Mangler ${money(CFG.confirm - price)} opp til ${money(CFG.confirm,0)}.`);
@@ -482,7 +537,8 @@ function render() {
   document.querySelectorAll("#ladder tr").forEach(tr => tr.classList.toggle("here", tr.dataset.z === zone));
 
   let trigOk = false, trigTxt;
-  if (price >= CFG.confirm) { trigOk = true; trigTxt = `Signal: JA. Jun-27 er over ${money(CFG.confirm,0)}.`; }
+  if (price >= CFG.confirm && relOk) { trigOk = true; trigTxt = `Signal: JA. Jun-27 er over ${money(CFG.confirm,0)} og har tatt igjen fronten (${relTxt}).`; }
+  else if (price >= CFG.confirm) { trigTxt = `Signal: NEI. Jun-27 er over ${money(CFG.confirm,0)}, men bare fordi hele kurven har løftet seg (Jun-27 mot front: ${relTxt}, krav ${signed(CFG.tighten)}).`; }
   else if (rising && holdsBase) { trigOk = true; trigTxt = `Signal: JA. Jun-27 stiger jevnt og holder seg over ${money(CFG.base,0)}.`; }
   else if (price > CFG.base) { trigTxt = `Signal: NEI. Jun-27 er over ${money(CFG.base,0)}, men ${!holdsBase ? "har ikke holdt det to dager på rad" : "stiger ikke jevnt"}.`; }
   else { trigTxt = `Signal: NEI. Jun-27 (${money(price)}) er ikke over utgangspunktet ${money(CFG.base,0)}.`; }
@@ -595,6 +651,7 @@ function hover(ev) {
   };
   row("Jun-27", money(p.jun), "--s1");
   row("Oljepris nå", money(p.front), "--front");
+  if (num(e.dec27_price) !== null) row("Dec-27", money(num(e.dec27_price)));
   row("Mangel nå (M1–M2)", signed(num(e.m1_m2)));
   row("Skilling", money(num(e.skilling_brent)));
   const px = (CH.x(p.t) / CH.W) * r.width;
@@ -614,22 +671,22 @@ $("chart").addEventListener("pointerleave", unhover);
 
 function drawTable(log) {
   const t = $("datatable"); t.textContent = "";
-  const hdr = ["Dato", "Jun-27", "Oljepris nå", "Kontrakt", "Mangel nå (M1–M2)", "Skilling", "Dated Brent"];
+  const hdr = ["Dato", "Jun-27", "Dec-27", "Oljepris nå", "Kontrakt", "Mangel nå (M1–M2)", "Skilling", "Dated Brent"];
   const tr = document.createElement("tr");
   hdr.forEach(h => { const th = document.createElement("th"); th.textContent = h; tr.appendChild(th); });
   t.appendChild(tr);
   [...log].reverse().forEach(e => {
     const r = document.createElement("tr");
     const cells = e.market_closed
-      ? [dato(e.ts), "marked stengt", "", "", "", "", ""]
-      : [dato(e.ts), money(num(e[SIG])), money(num(e.front_price)), e.front_code || "", signed(num(e.m1_m2)),
+      ? [dato(e.ts), "marked stengt", "", "", "", "", "", ""]
+      : [dato(e.ts), money(num(e[SIG])), money(num(e.dec27_price)), money(num(e.front_price)), e.front_code || "", signed(num(e.m1_m2)),
          money(num(e.skilling_brent)), money(num(e.dated_brent))];
     cells.forEach(v => { const td = document.createElement("td"); td.textContent = v; r.appendChild(td); });
     t.appendChild(r);
   });
 }
 
-["confirmInput", "baseInput", "weakInput", "mInput"].forEach(id => $(id).addEventListener("input", render));
+["confirmInput", "baseInput", "weakInput", "mInput", "tightenInput"].forEach(id => $(id).addEventListener("input", render));
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
 render();
 </script>
