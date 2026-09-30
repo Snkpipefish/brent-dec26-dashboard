@@ -212,6 +212,7 @@
         <div class="unit" id="q3src">millioner fat per dag · siste nyhetssitat</div>
         <div class="verdict" id="q3verdict">—</div>
         <table class="kv">
+          <tr><td>All olje ut gjennom Hormuz <span class="sub" id="q3hormuzsub">mill. fat per dag · siste nyhetssitat</span></td><td id="q3hormuz">—</td></tr>
           <tr><td>Brent minus Dubai-olje (månedssnitt) <span class="sub" id="q3bdsub">Verdensbanken</span></td><td id="q3bd">—</td></tr>
           <tr><td>Brent–Dubai fra nyheter <span class="sub" id="q3efssub"></span></td><td id="q3efs">—</td></tr>
           <tr><td>Forties-tillegg <span class="sub" id="q3fortsub"></span></td><td id="q3fort">—</td></tr>
@@ -223,6 +224,9 @@
         <p><strong>Hvorfor er det viktig?</strong> Dette er «tesen dør hvis»-tallet. Kommer Irans eksport tilbake over
            <b>1 million fat per dag</b>, er fatene faktisk på vei ut i markedet. Da er det ingen lang krise, uansett hva
            kurven sier. Da går du ut.</p>
+        <p><strong>Hormuz-tallet:</strong> all olje som faktisk kommer ut gjennom stredet, fra alle Gulf-landene, ikke bare Iran.
+           Dette siteres nesten hver uke (Kpler-tall via CNBC, MarineLink, Windward). Går det tilbake til nivået før krigen,
+           er stredet i praksis åpent igjen, uansett hva Iran gjør.</p>
         <p><strong>Om tallene:</strong> ingen av disse finnes gratis i sanntid. De hentes fra siste nyhetsartikkel som
            siterer et tall, med kilde og dato. Står det «ingen ferskt sitat», er det ærlig: vi vet ikke.</p>
       </div>
@@ -317,7 +321,7 @@
 "use strict";
 const SIG = "jun27_price";
 const CFG = { confirm: 84, base: 80, weak: 76, mLive: 1.5, tighten: 2 };
-const NEWS_MAX_AGE = 45;  // dager; må matche MAX_AGE_DAYS i news_assessments.py
+const NEWS_MAX_AGE = 30;  // dager; må matche MAX_AGE_DAYS i news_assessments.py
 const $ = (id) => document.getElementById(id);
 const num = (v) => (typeof v === "number" && !Number.isNaN(v)) ? v : null;
 const money = (v, d = 2) => v === null ? "—" : "$" + v.toFixed(d).replace(".", ",");
@@ -493,6 +497,13 @@ function render() {
     $(valId).title = o.sentence || "";
   };
   newsRow("efs_news", "q3efs", "q3efssub");
+  {  // Hormuz-flyt: mb/d, ikke dollar
+    const e = lastWith(log, x => x.hormuz_flows && typeof x.hormuz_flows.value === "number");
+    const o = e ? e.hormuz_flows : null, age = o ? dagerSiden(o.date, last.ts) : null;
+    if (!o) { $("q3hormuz").textContent = "ingen sitat"; $("q3hormuzsub").textContent = "mill. fat per dag · ingen nyhetssitat ennå"; }
+    else if (age !== null && age > NEWS_MAX_AGE) { $("q3hormuz").textContent = "ingen ferskt sitat"; $("q3hormuzsub").textContent = `siste kjente ${o.value.toFixed(1).replace(".", ",")} mill. fat/dag (${o.source || "?"}, ${dato(o.date)}) er ${age} dager gammelt`; }
+    else { $("q3hormuz").textContent = o.value.toFixed(1).replace(".", ",") + " mill. fat/dag"; $("q3hormuzsub").textContent = `${o.source || "?"}, ${dato(o.date)}${alderTxt(age)}`; $("q3hormuz").title = o.sentence || ""; }
+  }
   newsRow("forties", "q3fort", "q3fortsub");
 
   // ---------- Svaret øverst ----------

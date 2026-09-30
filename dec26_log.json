@@ -2229,13 +2229,13 @@
       "url": null
     },
     "iran_loadings": {
-      "value": null,
+      "value": 0.247,
       "unit": "mb/d",
-      "source": null,
-      "date": null,
-      "age_days": null,
-      "sentence": null,
-      "url": null
+      "source": "briefs.co",
+      "date": "2026-09-11T17:40:00-04:00",
+      "age_days": 19,
+      "sentence": "US naval blockade slashes Iran's crude exports 74% to 247k b/d, swells onshore stocks to ~67m bbl, stalls 38m bbl at sea, tightening Asia supplies and lifting p",
+      "url": "https://www.briefs.co/news/iran-s-oil-exports-choked-as-us-naval-blockade-bites-lifting/"
     },
     "dec26_source": "barchart+playwright",
     "dec26_error": null,
@@ -2245,6 +2245,15 @@
     "front_price": 103.73,
     "m1_m2": 4.77,
     "front_dec": 4.77,
-    "front_jun": 16.04
+    "front_jun": 16.04,
+    "hormuz_flows": {
+      "value": 12.8,
+      "unit": "mb/d",
+      "source": "shafaq.com",
+      "date": "2026-09-28T06:44:36+00:00",
+      "age_days": 2,
+      "sentence": "oncerns over essentials Hormuz September oil flow hits 12.8M+ bpd Economy & Business oil exports Strait of Hormuz maritime traffic Kpler 2026-09-28T06:44:36+00:00 Share font Enable Reading Mode A- A A+ Shafaq News- Hormuz Middle East oil exports rose to about 12.8 million barrels per day (bpd) in September as tanker traffic through the Strait of Hormuz picked up, reaching their highest level since the US-Israeli war with Iran began on February 28, ship-tracking firm Kpler said on Monday.",
+      "url": "https://shafaq.com/en/Economy/Hormuz-September-oil-flow-hits-12-5M-bpd"
+    }
   }
 ]
