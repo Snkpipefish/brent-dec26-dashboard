@@ -2255,5 +2255,67 @@
       "sentence": "oncerns over essentials Hormuz September oil flow hits 12.8M+ bpd Economy & Business oil exports Strait of Hormuz maritime traffic Kpler 2026-09-28T06:44:36+00:00 Share font Enable Reading Mode A- A A+ Shafaq News- Hormuz Middle East oil exports rose to about 12.8 million barrels per day (bpd) in September as tanker traffic through the Strait of Hormuz picked up, reaching their highest level since the US-Israeli war with Iran began on February 28, ship-tracking firm Kpler said on Monday.",
       "url": "https://shafaq.com/en/Economy/Hormuz-September-oil-flow-hits-12-5M-bpd"
     }
+  },
+  {
+    "ts": "2026-10-01T20:03:26Z",
+    "market_closed": false,
+    "dec26_price": 102.53,
+    "skilling_brent": 97.37,
+    "skilling_asof": "2026-09-29T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 113.96,
+    "dated_brent_asof": "2026-09-29",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 11.2,
+    "brent_dubai_period": "2026M08",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.247,
+      "unit": "mb/d",
+      "source": "briefs.co",
+      "date": "2026-09-11T17:40:00-04:00",
+      "age_days": 20,
+      "sentence": "US naval blockade slashes Iran's crude exports 74% to 247k b/d, swells onshore stocks to ~67m bbl, stalls 38m bbl at sea, tightening Asia supplies and lifting p",
+      "url": "https://www.briefs.co/news/iran-s-oil-exports-choked-as-us-naval-blockade-bites-lifting/"
+    },
+    "hormuz_flows": {
+      "value": 10.0,
+      "unit": "mb/d",
+      "source": "inspenet.com",
+      "date": "2026-09-30T10:22:11-05:00",
+      "age_days": 1,
+      "sentence": "Hormuz Oil Flows: Critical 10 Million Bpd Gap Emerges Skip to content The global knowledge network for professionals in the energy and industry EN ES News Articles Content from Allies Content from Contributors Inspenet TV Corporate Business Directory Events Newsletter Brief Latest Editi",
+      "url": "https://inspenet.com/en/news/hormuz-oil-flows-10-million-bpd-gap/"
+    },
+    "dec26_source": "barchart+playwright",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 88.0,
+    "dec27_price": 81.49,
+    "front_code": "CBZ26",
+    "front_price": 102.53,
+    "m1_m2": 3.89,
+    "front_dec": 0.0,
+    "front_jun": 14.53,
+    "front_dec27": 21.04,
+    "suspect_stale": false
   }
 ]
