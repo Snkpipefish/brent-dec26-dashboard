@@ -2317,5 +2317,67 @@
     "front_jun": 14.53,
     "front_dec27": 21.04,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-10-02T18:47:54Z",
+    "market_closed": false,
+    "dec26_price": 102.19,
+    "skilling_brent": 101.38,
+    "skilling_asof": "2026-09-30T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 113.96,
+    "dated_brent_asof": "2026-09-29",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 11.2,
+    "brent_dubai_period": "2026M08",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.25,
+      "unit": "mb/d",
+      "source": "safety4sea.com",
+      "date": "2026-10-02T13:31:30+03:00",
+      "age_days": 0,
+      "sentence": "Iranian crude loadings had averaged around 250,000 barrels per day in August, according to preliminary estimates compiled by Bloomberg, before falling to zero in September.",
+      "url": "https://safety4sea.com/iranian-crude-loadings-fall-to-zero-as-us-blockade-disrupts-oil-shipments/"
+    },
+    "hormuz_flows": {
+      "value": 10.0,
+      "unit": "mb/d",
+      "source": "inspenet.com",
+      "date": "2026-09-30T10:22:11-05:00",
+      "age_days": 2,
+      "sentence": "Hormuz Oil Flows: Critical 10 Million Bpd Gap Emerges Skip to content The global knowledge network for professionals in the energy and industry EN ES News Articles Content from Allies Content from Contributors Inspenet TV Corporate Business Directory Events Newsletter Brief Latest Editi",
+      "url": "https://inspenet.com/en/news/hormuz-oil-flows-10-million-bpd-gap/"
+    },
+    "dec26_source": "barchart+playwright",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 88.68,
+    "dec27_price": 81.91,
+    "front_code": "CBZ26",
+    "front_price": 102.19,
+    "m1_m2": 3.48,
+    "front_dec": 0.0,
+    "front_jun": 13.51,
+    "front_dec27": 20.28,
+    "suspect_stale": false
   }
 ]
