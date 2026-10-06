@@ -2441,5 +2441,67 @@
     "front_jun": 11.13,
     "front_dec27": 17.56,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-10-06T18:46:29Z",
+    "market_closed": false,
+    "dec26_price": 100.69,
+    "skilling_brent": 99.24,
+    "skilling_asof": "2026-10-04T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 113.96,
+    "dated_brent_asof": "2026-09-29",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 23.5,
+    "brent_dubai_period": "2026M09",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.25,
+      "unit": "mb/d",
+      "source": "safety4sea.com",
+      "date": "2026-10-02T13:31:30+03:00",
+      "age_days": 4,
+      "sentence": "Iranian crude loadings had averaged around 250,000 barrels per day in August, according to preliminary estimates compiled by Bloomberg, before falling to zero in September.",
+      "url": "https://safety4sea.com/iranian-crude-loadings-fall-to-zero-as-us-blockade-disrupts-oil-shipments/"
+    },
+    "hormuz_flows": {
+      "value": 3.0,
+      "unit": "mb/d",
+      "source": "oilprice.com",
+      "date": "2026-10-03T14:00:00-05:00",
+      "age_days": 3,
+      "sentence": "We provide what many… More Info Related posts The Hidden Cost of Saudi Arabia’s Oil Export Recovery Gulf Storm Threat Could Put 3 Million Bpd of Refining Capacity at Risk Standard Chartered Says Hormuz Oil Flows Are Far From Normal Leave a comment Leave a comment First Name Last Name Email That email address is already in the database.",
+      "url": "https://oilprice.com/Energy/Energy-General/Iran-Is-Losing-Some-of-Its-Leverage-Over-the-Strait-of-Hormuz.html"
+    },
+    "dec26_source": "barchart+playwright",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 88.7,
+    "dec27_price": 82.32,
+    "front_code": "CBZ26",
+    "front_price": 100.69,
+    "m1_m2": 2.99,
+    "front_dec": 0.0,
+    "front_jun": 11.99,
+    "front_dec27": 18.37,
+    "suspect_stale": false
   }
 ]
