@@ -2565,5 +2565,67 @@
     "front_jun": 10.84,
     "front_dec27": 17.39,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-10-08T18:48:26Z",
+    "market_closed": false,
+    "dec26_price": 104.47,
+    "skilling_brent": 99.6,
+    "skilling_asof": "2026-10-06T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 125.44,
+    "dated_brent_asof": "2026-10-06",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 23.5,
+    "brent_dubai_period": "2026M09",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.25,
+      "unit": "mb/d",
+      "source": "safety4sea.com",
+      "date": "2026-10-02T13:31:30+03:00",
+      "age_days": 6,
+      "sentence": "Iranian crude loadings had averaged around 250,000 barrels per day in August, according to preliminary estimates compiled by Bloomberg, before falling to zero in September.",
+      "url": "https://safety4sea.com/iranian-crude-loadings-fall-to-zero-as-us-blockade-disrupts-oil-shipments/"
+    },
+    "hormuz_flows": {
+      "value": 20.9,
+      "unit": "mb/d",
+      "source": "aa.com.tr",
+      "date": "2026-10-05T16:03:45.373",
+      "age_days": 3,
+      "sentence": "Hormuz carried 20.9 million barrels per day of oil in the first half of 2025, according to the US Energy Information Administration.",
+      "url": "https://www.aa.com.tr/en/features/explainer-closed-or-open-tanker-data-tells-a-different-story-in-strait-of-hormuz/4078559"
+    },
+    "dec26_source": "barchart+playwright",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 91.42,
+    "dec27_price": 83.92,
+    "front_code": "CBZ26",
+    "front_price": 104.47,
+    "m1_m2": 3.3,
+    "front_dec": 0.0,
+    "front_jun": 13.05,
+    "front_dec27": 20.55,
+    "suspect_stale": false
   }
 ]
