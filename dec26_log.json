@@ -2875,5 +2875,67 @@
     "front_jun": 12.2,
     "front_dec27": 20.12,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-10-15T18:47:59Z",
+    "market_closed": false,
+    "dec26_price": 105.87,
+    "skilling_brent": 104.28,
+    "skilling_asof": "2026-10-13T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 125.44,
+    "dated_brent_asof": "2026-10-06",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 23.5,
+    "brent_dubai_period": "2026M09",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.23,
+      "unit": "mb/d",
+      "source": "theyeshivaworld.com",
+      "date": "2026-10-14T05:10:00Z",
+      "age_days": 1,
+      "sentence": "According to energy intelligence firm Vortexa, Iran’s seaborne crude oil exports fell to zero during the second week of September, compared with a 14-day average of approximately 230,000 barrels per day at the beginning of that month.",
+      "url": "https://www.theyeshivaworld.com/news/israel-news/2609874/iran-denies-economic-collapse-central-bank-governor-pushes-back-as-u-s-blockade-strangles-oil-exports.html"
+    },
+    "hormuz_flows": {
+      "value": 9.7,
+      "unit": "mb/d",
+      "source": "cnbctv18.com",
+      "date": "2026-10-13T15:36:09+05:30",
+      "age_days": 2,
+      "sentence": "z flows plunge, says Kpler expert By : Manisha Gupta October 13, 2026 | 15:36 IST Published On Oct 13, 2026 | 15:36 IST Last Updated On Oct 13, 2026 | 15:36 IST Twitter Whatsapp Facebook LinkedIn Copy Link AI Summary Strait of Hormuz oil flows have dropped to 9.7 million bpd, driving concerns over global supplies.",
+      "url": "https://www.cnbctv18.com/market/commodities/hormuz-oil-flows-drop-brent-crude-115-dollars-q4-amena-bakr-20010805.htm"
+    },
+    "dec26_source": "barchart+playwright",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 93.22,
+    "dec27_price": 85.03,
+    "front_code": "CBZ26",
+    "front_price": 105.87,
+    "m1_m2": 2.72,
+    "front_dec": 0.0,
+    "front_jun": 12.65,
+    "front_dec27": 20.84,
+    "suspect_stale": false
   }
 ]
