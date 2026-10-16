@@ -2937,5 +2937,67 @@
     "front_jun": 12.65,
     "front_dec27": 20.84,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-10-16T21:03:18Z",
+    "market_closed": false,
+    "dec26_price": 109.74,
+    "skilling_brent": 107.37,
+    "skilling_asof": "2026-10-15T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 126.55,
+    "dated_brent_asof": "2026-10-14",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 23.5,
+    "brent_dubai_period": "2026M09",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.23,
+      "unit": "mb/d",
+      "source": "theyeshivaworld.com",
+      "date": "2026-10-14T05:10:00Z",
+      "age_days": 2,
+      "sentence": "According to energy intelligence firm Vortexa, Iran’s seaborne crude oil exports fell to zero during the second week of September, compared with a 14-day average of approximately 230,000 barrels per day at the beginning of that month.",
+      "url": "https://www.theyeshivaworld.com/news/israel-news/2609874/iran-denies-economic-collapse-central-bank-governor-pushes-back-as-u-s-blockade-strangles-oil-exports.html"
+    },
+    "hormuz_flows": {
+      "value": 17.15,
+      "unit": "mb/d",
+      "source": "grafa.com",
+      "date": "2026-10-16T08:21:00.000Z",
+      "age_days": 0,
+      "sentence": "Shipping data from Kpler showed average oil flows through the Strait of Hormuz fell to 11.62 million barrels per day in the week to October 13, compared with a baseline of 17.15 million barrels per day.",
+      "url": "https://grafa.com/en/news/united-states/brent-crude-105-oil-prices-hormuz-tanker-attacks"
+    },
+    "dec26_source": "barchart+playwright",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 95.33,
+    "dec27_price": 86.4,
+    "front_code": "CBZ26",
+    "front_price": 109.74,
+    "m1_m2": 3.1,
+    "front_dec": 0.0,
+    "front_jun": 14.41,
+    "front_dec27": 23.34,
+    "suspect_stale": false
   }
 ]
