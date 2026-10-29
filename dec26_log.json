@@ -3495,5 +3495,67 @@
     "front_jun": 16.95,
     "front_dec27": 26.32,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-10-29T19:47:44Z",
+    "market_closed": false,
+    "dec26_price": 115.0,
+    "skilling_brent": 109.87,
+    "skilling_asof": "2026-10-27T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 123.1,
+    "dated_brent_asof": "2026-10-27",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 23.5,
+    "brent_dubai_period": "2026M09",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.23,
+      "unit": "mb/d",
+      "source": "finance.biggo.com",
+      "date": "2026-10-13T23:25:17.000Z",
+      "age_days": 16,
+      "sentence": "Vortexa data indicates that the 14-day moving average of Iranian crude seaborne exports stood at 230,000 barrels per day in early September before rapidly falling to zero.",
+      "url": "https://finance.biggo.com/news/a4c0cd3e-c18d-4415-bc1d-94039139b4c6"
+    },
+    "hormuz_flows": {
+      "value": 8.5,
+      "unit": "mb/d",
+      "source": "sunsirs.com",
+      "date": "2026-10-20T03:24:00Z",
+      "age_days": 9,
+      "sentence": "Drop in Crude Oil Flow Through the Strait of Hormuz Provides Strong Support for Oil Prices October 20 2026 10:24:08 SunSirs(Selena) On Monday, analytics firm Kpler reported that crude oil flows through the Strait of Hormuz fell to an average of approximately 8.5 million barrels per day (bpd) last week—a significant decline from the more than 20 million bpd recorded the previous week—as threats to commercial shipping intensified.",
+      "url": "https://www.sunsirs.com/commodity-news/petail-36945.html"
+    },
+    "dec26_source": "barchart+playwright",
+    "dec26_error": null,
+    "dec26_crosscheck_ok": true,
+    "jun27_price": 96.81,
+    "dec27_price": 87.46,
+    "front_code": "CBZ26",
+    "front_price": 115.0,
+    "m1_m2": 4.01,
+    "front_dec": 0.0,
+    "front_jun": 18.19,
+    "front_dec27": 27.54,
+    "suspect_stale": false
   }
 ]
