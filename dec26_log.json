@@ -3557,5 +3557,67 @@
     "front_jun": 18.19,
     "front_dec27": 27.54,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-11-02T19:48:28Z",
+    "market_closed": false,
+    "dec26_price": null,
+    "skilling_brent": 111.41,
+    "skilling_asof": "2026-10-29T21:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 123.1,
+    "dated_brent_asof": "2026-10-27",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 23.5,
+    "brent_dubai_period": "2026M09",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": null,
+      "unit": "mb/d",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "hormuz_flows": {
+      "value": 9.7,
+      "unit": "mb/d",
+      "source": "cnbctv18.com",
+      "date": "2026-10-13T15:36:09+05:30",
+      "age_days": 20,
+      "sentence": "z flows plunge, says Kpler expert By : Manisha Gupta October 13, 2026 | 15:36 IST Published On Oct 13, 2026 | 15:36 IST Last Updated On Oct 13, 2026 | 15:36 IST Twitter Whatsapp Facebook LinkedIn Copy Link AI Summary Strait of Hormuz oil flows have dropped to 9.7 million bpd, driving concerns over global supplies.",
+      "url": "https://www.cnbctv18.com/market/commodities/hormuz-oil-flows-drop-brent-crude-115-dollars-q4-amena-bakr-20010805.htm"
+    },
+    "dec26_source": null,
+    "dec26_error": "barchart: statisk feilet (RuntimeError: HTTP 202); playwright feilet (ValueError: fant ingen numerisk lastPrice i HTML); oilprice: kontrakt CBZ26 ikke i stripen",
+    "dec26_crosscheck_ok": null,
+    "jun27_price": 93.12,
+    "dec27_price": 84.97,
+    "front_code": "CBF27",
+    "front_price": 104.76,
+    "m1_m2": 3.05,
+    "front_dec": null,
+    "front_jun": 11.64,
+    "front_dec27": 19.79,
+    "suspect_stale": false
   }
 ]
