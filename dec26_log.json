@@ -3681,5 +3681,67 @@
     "front_jun": 10.72,
     "front_dec27": 18.89,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-11-04T19:47:58Z",
+    "market_closed": false,
+    "dec26_price": null,
+    "skilling_brent": 103.39,
+    "skilling_asof": "2026-11-02T22:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 107.03,
+    "dated_brent_asof": "2026-11-03",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 22.3,
+    "brent_dubai_period": "2026M10",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.23,
+      "unit": "mb/d",
+      "source": "shafaq.com",
+      "date": "2026-10-13T22:21:25+00:00",
+      "age_days": 22,
+      "sentence": "Vortexa said Iranian crude exports had averaged 230,000 barrels per day on a 14-day basis at the start of September.",
+      "url": "https://shafaq.com/en/World/Vortexa-Iran-crude-exports-fall-to-zero-under-US-blockade"
+    },
+    "hormuz_flows": {
+      "value": 24.0,
+      "unit": "mb/d",
+      "source": "discoveryalert.com",
+      "date": "2026-11-04T17:11:59+00:00",
+      "age_days": 0,
+      "sentence": "esidual Grade Calculator Resource Estimator Visual Logs Estimator Commodities Grade Guide Home Analysis Crude Oil Markets Why Hormuz Oil Flows Look Both Normal and Collapsed Hormuz oil flows look both normal and collapsed because Kpler's wider Gulf count tops 24 million b/d while its direct Strait count sits near 7.3 million b/d, and the gap comes down to what each source measures.",
+      "url": "https://discoveryalert.com/analysis/hormuz-oil-flows-data-gap-november-2026/"
+    },
+    "dec26_source": null,
+    "dec26_error": "barchart: statisk feilet (RuntimeError: HTTP 202); playwright feilet (ValueError: fant ingen numerisk lastPrice i HTML); oilprice: kontrakt CBZ26 ikke i stripen",
+    "dec26_crosscheck_ok": null,
+    "jun27_price": 85.58,
+    "dec27_price": 79.17,
+    "front_code": "CBF27",
+    "front_price": 94.88,
+    "m1_m2": 2.43,
+    "front_dec": null,
+    "front_jun": 9.3,
+    "front_dec27": 15.71,
+    "suspect_stale": false
   }
 ]
