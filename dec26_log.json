@@ -3805,5 +3805,67 @@
     "front_jun": 12.31,
     "front_dec27": 19.31,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-11-06T19:47:50Z",
+    "market_closed": false,
+    "dec26_price": null,
+    "skilling_brent": 97.64,
+    "skilling_asof": "2026-11-04T22:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 107.03,
+    "dated_brent_asof": "2026-11-03",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 22.3,
+    "brent_dubai_period": "2026M10",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 0.23,
+      "unit": "mb/d",
+      "source": "shafaq.com",
+      "date": "2026-10-13T22:21:25+00:00",
+      "age_days": 24,
+      "sentence": "Vortexa said Iranian crude exports had averaged 230,000 barrels per day on a 14-day basis at the start of September.",
+      "url": "https://shafaq.com/en/World/Vortexa-Iran-crude-exports-fall-to-zero-under-US-blockade"
+    },
+    "hormuz_flows": {
+      "value": 9.7,
+      "unit": "mb/d",
+      "source": "cnbctv18.com",
+      "date": "2026-10-13T15:36:09+05:30",
+      "age_days": 24,
+      "sentence": "z flows plunge, says Kpler expert By : Manisha Gupta October 13, 2026 | 15:36 IST Published On Oct 13, 2026 | 15:36 IST Last Updated On Oct 13, 2026 | 15:36 IST Twitter Whatsapp Facebook LinkedIn Copy Link AI Summary Strait of Hormuz oil flows have dropped to 9.7 million bpd, driving concerns over global supplies.",
+      "url": "https://www.cnbctv18.com/market/commodities/hormuz-oil-flows-drop-brent-crude-115-dollars-q4-amena-bakr-20010805.htm"
+    },
+    "dec26_source": null,
+    "dec26_error": "barchart: statisk feilet (RuntimeError: HTTP 202); playwright feilet (ValueError: fant ingen numerisk lastPrice i HTML); oilprice: kontrakt CBZ26 ikke i stripen",
+    "dec26_crosscheck_ok": null,
+    "jun27_price": 87.74,
+    "dec27_price": 80.55,
+    "front_code": "CBF27",
+    "front_price": 98.35,
+    "m1_m2": 2.62,
+    "front_dec": null,
+    "front_jun": 10.61,
+    "front_dec27": 17.8,
+    "suspect_stale": false
   }
 ]
