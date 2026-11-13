@@ -4115,5 +4115,67 @@
     "front_jun": 8.91,
     "front_dec27": 15.37,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-11-13T22:43:00Z",
+    "market_closed": false,
+    "dec26_price": null,
+    "skilling_brent": 94.72,
+    "skilling_asof": "2026-11-12T22:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 92.14,
+    "dated_brent_asof": "2026-11-11",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 22.3,
+    "brent_dubai_period": "2026M10",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": null,
+      "unit": "mb/d",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "hormuz_flows": {
+      "value": 9.9,
+      "unit": "mb/d",
+      "source": "gulfnews.com",
+      "date": "2026-10-22T04:09:06+04:00",
+      "age_days": 22,
+      "sentence": "September shipments were divided among three main export channels: 60% — Strait of Hormuz: About 9.9 mbd physically crossed the strait, with shuttle tankers playing a major role.",
+      "url": "https://gulfnews.com/business/energy/246-million-barrels-of-oil-per-day-mid-east-oil-finds-a-way-around-war-but-fuel-supplies-still-lag-1.500718415"
+    },
+    "dec26_source": null,
+    "dec26_error": "barchart: statisk feilet (RuntimeError: HTTP 202); playwright feilet (ValueError: fant ingen numerisk lastPrice i HTML); oilprice: kontrakt CBZ26 ikke i stripen",
+    "dec26_crosscheck_ok": null,
+    "jun27_price": 86.59,
+    "dec27_price": 80.31,
+    "front_code": "CBF27",
+    "front_price": 96.3,
+    "m1_m2": 2.83,
+    "front_dec": null,
+    "front_jun": 9.71,
+    "front_dec27": 15.99,
+    "suspect_stale": false
   }
 ]
