@@ -4735,5 +4735,67 @@
     "front_jun": 13.41,
     "front_dec27": 19.53,
     "suspect_stale": false
+  },
+  {
+    "ts": "2026-11-27T19:46:56Z",
+    "market_closed": false,
+    "dec26_price": null,
+    "skilling_brent": 91.38,
+    "skilling_asof": "2026-11-25T22:00:00Z",
+    "skilling_error": null,
+    "dated_brent": 91.8,
+    "dated_brent_asof": "2026-11-24",
+    "dated_brent_error": null,
+    "brent_dubai_monthly": 22.3,
+    "brent_dubai_period": "2026M10",
+    "brent_dubai_error": null,
+    "forties": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "efs_news": {
+      "value": null,
+      "unit": "$/bbl",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "iran_loadings": {
+      "value": 2.0,
+      "unit": "mb/d",
+      "source": "discoveryalert.com",
+      "date": "2026-11-15T21:26:35+00:00",
+      "age_days": 12,
+      "sentence": "What the tracking data shows According to Vortexa, Iran shipped roughly 2 million barrels per day (mb/d) earlier in 2026 .",
+      "url": "https://discoveryalert.com/analysis/iran-oil-exports-china-crude-gap-november-2026/"
+    },
+    "hormuz_flows": {
+      "value": null,
+      "unit": "mb/d",
+      "source": null,
+      "date": null,
+      "age_days": null,
+      "sentence": null,
+      "url": null
+    },
+    "dec26_source": null,
+    "dec26_error": "barchart: statisk feilet (RuntimeError: HTTP 202); playwright feilet (ValueError: fant ingen numerisk lastPrice i HTML); oilprice: kontrakt CBZ26 ikke i stripen",
+    "dec26_crosscheck_ok": null,
+    "jun27_price": 82.8,
+    "dec27_price": 76.93,
+    "front_code": "CBF27",
+    "front_price": 95.32,
+    "m1_m2": 4.66,
+    "front_dec": null,
+    "front_jun": 12.52,
+    "front_dec27": 18.39,
+    "suspect_stale": false
   }
 ]
